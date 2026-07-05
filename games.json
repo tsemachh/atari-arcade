@@ -2,8 +2,8 @@
   "games": [
     {
       "name": "River Raid",
-      "file": "RiverRaid.atr",
-      "description": "Activision, 1983"
+      "file": "RiverRaid.xex",
+      "description": "Activision, 1983 (title version)"
     },
     {
       "name": "Action Biker",
