@@ -7529,5 +7529,35 @@
     }
   })();
   </script>
+
+<!-- ARCADE-PATCH: auto-fullscreen. Re-apply via scripts/patch-emu.sh after
+     replacing the AltirraSDL bundle files. -->
+<style>
+  /* Hide the emulator top bar whenever the window is fullscreen, including
+     fullscreen carried over from the picker page (element-fullscreen is
+     already handled by the shell's own :fullscreen rule). */
+  @media (display-mode: fullscreen) {
+    body > header { display: none !important; }
+  }
+</style>
+<script>
+  (function () {
+    try {
+      var p = new URLSearchParams(location.search);
+      if (p.get("fs") !== "1") return;
+      // requestFullscreen needs a user gesture: arm a one-shot handler so
+      // the very first tap (joystick, START, anywhere) enters fullscreen.
+      var arm = function () {
+        document.removeEventListener("pointerdown", arm, true);
+        if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen({ navigationUI: "hide" }).catch(function () {});
+        }
+      };
+      if (!document.fullscreenElement) {
+        document.addEventListener("pointerdown", arm, true);
+      }
+    } catch (e) { /* ignore */ }
+  })();
+</script>
 </body>
 </html>

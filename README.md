@@ -35,3 +35,12 @@ and replace the four `AltirraSDL.*` files in `emu/`.
 Pushes to `main` deploy automatically via GitHub Pages (Settings → Pages →
 Source: GitHub Actions). The picker footer shows the exact deploy time and
 commit, and the service worker cache is busted on every deploy.
+
+## Local patches to the emulator shell
+
+`emu/index.html` carries a small "ARCADE-PATCH" block (auto-fullscreen:
+hides the top bar under `display-mode: fullscreen`, and `?fs=1` makes the
+first tap enter fullscreen). After replacing the AltirraSDL bundle files,
+re-apply it with:
+
+    ./scripts/patch-emu.sh
