@@ -187,6 +187,29 @@
           render(searchEl.value);
         });
 
+        // Auto-fullscreen on touch devices: enter fullscreen during the tap
+        // (a user gesture), then navigate — Chrome keeps fullscreen across
+        // same-origin navigation, so the emulator starts already fullscreen.
+        // iPhones lack the fullscreen API; there the PWA install covers it.
+        grid.addEventListener("click", function (e) {
+          if ((navigator.maxTouchPoints || 0) === 0) return; // desktop: normal
+          var a = e.target && e.target.closest && e.target.closest("a.card");
+          if (!a) return;
+          var root = document.documentElement;
+          if (!root.requestFullscreen || document.fullscreenElement) return;
+          e.preventDefault();
+          var href = a.href;
+          var go = function () { window.location.href = href; };
+          try {
+            var p = root.requestFullscreen({ navigationUI: "hide" });
+            if (p && typeof p.then === "function") {
+              p.then(go, go);
+              return;
+            }
+          } catch (err) { /* fall through */ }
+          go();
+        });
+
         // Deep link: ?rom=<name> jumps straight into the emulator.
         try {
           var wanted = new URLSearchParams(location.search).get("rom");
