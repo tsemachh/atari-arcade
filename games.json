@@ -19,11 +19,6 @@
       "description": ""
     },
     {
-      "name": "Arkanoid 2",
-      "file": "Arkanoid2.xex",
-      "description": ""
-    },
-    {
       "name": "Baja Buggies",
       "file": "BajaBuggies.xex"
     },
@@ -36,10 +31,6 @@
       "name": "Boulder Dash",
       "file": "BoulderDash.xex",
       "description": "First Star Software, 1984"
-    },
-    {
-      "name": "Bounty Bob Strikes Back",
-      "file": "BountyBobStrikesBack.xex"
     },
     {
       "name": "Bristles",
@@ -221,17 +212,14 @@
       "description": ""
     },
     {
-      "name": "Popcorn",
-      "file": "Popcorn.xex"
-    },
-    {
       "name": "Qix",
       "file": "Qix.xex",
       "description": ""
     },
     {
       "name": "Soccer",
-      "file": "Soccer.atr"
+      "file": "Soccer.xex",
+      "description": "Thorn EMI Video"
     },
     {
       "name": "Space Invaders",
