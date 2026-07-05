@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Atari Arcade</title>
+    <meta name="theme-color" content="#0d1117" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Atari" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="icons/icon-192.png" />
+    <link rel="icon" href="icons/icon-192.png" />
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #0d1117;
+        --panel: #161d2b;
+        --panel2: #131a26;
+        --text: #e6eefc;
+        --muted: #9db0d3;
+        --border: rgba(255, 255, 255, 0.09);
+        --accent: #5cc8ff;
+      }
+      * { box-sizing: border-box; }
+      html, body {
+        margin: 0;
+        padding: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      }
+      header {
+        padding: calc(env(safe-area-inset-top, 0px) + 18px) 18px 8px;
+        text-align: center;
+      }
+      h1 {
+        margin: 0;
+        font-size: 26px;
+        letter-spacing: 0.06em;
+        font-weight: 800;
+      }
+      h1 .accent { color: var(--accent); }
+      .sub {
+        color: var(--muted);
+        font-size: 13px;
+        margin-top: 4px;
+      }
+      .search {
+        display: block;
+        width: min(480px, calc(100% - 36px));
+        margin: 14px auto 4px;
+        padding: 12px 16px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: var(--panel2);
+        color: var(--text);
+        font-size: 15px;
+        outline: none;
+      }
+      .search:focus { border-color: var(--accent); }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 10px;
+        padding: 14px 14px calc(env(safe-area-inset-bottom, 0px) + 20px);
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+      .card {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        padding: 14px 12px;
+        min-height: 64px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: linear-gradient(180deg, var(--panel), var(--panel2));
+        color: var(--text);
+        text-decoration: none;
+        transition: border-color 0.12s;
+      }
+      .card:hover, .card:focus-visible { border-color: var(--accent); }
+      .card .name {
+        font-weight: 700;
+        font-size: 15px;
+        line-height: 1.25;
+      }
+      .card .desc {
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .footer {
+        text-align: center;
+        color: var(--muted);
+        font-size: 12px;
+        padding: 6px 16px calc(env(safe-area-inset-bottom, 0px) + 26px);
+      }
+      .footer a { color: var(--accent); text-decoration: none; }
+      #installBtn {
+        display: block;
+        margin: 4px auto 14px;
+        padding: 10px 20px;
+        border-radius: 10px;
+        border: 1px solid rgba(92, 200, 255, 0.5);
+        background: rgba(16, 38, 61, 0.6);
+        color: var(--accent);
+        font-weight: 700;
+        font-size: 14px;
+        cursor: pointer;
+      }
+      #installBtn[hidden] { display: none; }
+      .status { text-align: center; color: var(--muted); padding: 24px; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>ATARI <span class="accent">ARCADE</span></h1>
+      <div class="sub">Atari 800 XL &middot; powered by AltirraSDL (cycle-accurate, WebAssembly)</div>
+    </header>
+    <input type="search" id="search" class="search" placeholder="Search games…" autocomplete="off" />
+    <div id="grid" class="grid"></div>
+    <div id="status" class="status">Loading game list…</div>
+    <button type="button" id="installBtn" hidden>&#x2B07; Install as app</button>
+    <div class="footer">
+      <span id="buildLine">&nbsp;</span><br />
+      Emulation by <a href="https://github.com/ilmenit/AltirraSDL" rel="noopener">AltirraSDL</a>
+      / <a href="https://www.virtualdub.org/altirra.html" rel="noopener">Altirra</a> &middot;
+      <a id="emuDirect" href="emu/AltirraSDL.html">open emulator directly</a>
+    </div>
+
+    <script>
+      (function () {
+        "use strict";
+        var grid = document.getElementById("grid");
+        var statusEl = document.getElementById("status");
+        var searchEl = document.getElementById("search");
+        var allGames = [];
+
+        // Launch options: fast disk loading, stock 800XL (best compatibility
+        // for 80s titles), back-button returns to this picker.
+        function launchUrl(file) {
+          return (
+            "emu/AltirraSDL.html?lib=" + encodeURIComponent(file) +
+            "&experience=convenient&addons=off" +
+            "&back_url=../&back_label=" + encodeURIComponent("⬅ Games")
+          );
+        }
+
+        function render(filter) {
+          var norm = (filter || "").trim().toLowerCase();
+          grid.textContent = "";
+          var shown = 0;
+          allGames.forEach(function (g) {
+            if (norm && g.name.toLowerCase().indexOf(norm) === -1) return;
+            var a = document.createElement("a");
+            a.className = "card";
+            a.href = launchUrl(g.file);
+            var name = document.createElement("span");
+            name.className = "name";
+            name.textContent = g.name;
+            a.appendChild(name);
+            if (g.description) {
+              var d = document.createElement("span");
+              d.className = "desc";
+              d.textContent = g.description;
+              a.appendChild(d);
+            }
+            grid.appendChild(a);
+            shown++;
+          });
+          statusEl.textContent = shown ? "" : "No games match.";
+        }
+
+        fetch("games.json", { cache: "no-cache" })
+          .then(function (r) { return r.json(); })
+          .then(function (data) {
+            allGames = (data && data.games) || [];
+            statusEl.textContent = "";
+            render("");
+          })
+          .catch(function () {
+            statusEl.textContent = "Could not load the game list.";
+          });
+
+        searchEl.addEventListener("input", function () {
+          render(searchEl.value);
+        });
+
+        // Deep link: ?rom=<name> jumps straight into the emulator.
+        try {
+          var wanted = new URLSearchParams(location.search).get("rom");
+          if (wanted) {
+            fetch("games.json", { cache: "no-cache" })
+              .then(function (r) { return r.json(); })
+              .then(function (data) {
+                var g = (data.games || []).find(function (e) {
+                  return e.name.toLowerCase() === wanted.toLowerCase() ||
+                         e.file.toLowerCase() === wanted.toLowerCase();
+                });
+                if (g) location.href = launchUrl(g.file);
+              });
+          }
+        } catch (e) { /* ignore */ }
+
+        // Deploy stamp (network-first via SW so never stale).
+        fetch("build-info.json", { cache: "no-cache" })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (info) {
+            if (info && info.deployedAt) {
+              document.getElementById("buildLine").textContent =
+                "Deployed: " + info.deployedAt + (info.commit ? " (" + info.commit + ")" : "");
+            }
+          })
+          .catch(function () { /* offline */ });
+
+        // PWA
+        if ("serviceWorker" in navigator) {
+          window.addEventListener("load", function () {
+            navigator.serviceWorker.register("sw.js").catch(function () {});
+          });
+        }
+        var deferredPrompt = null;
+        var installBtn = document.getElementById("installBtn");
+        var standalone =
+          (window.matchMedia && (window.matchMedia("(display-mode: standalone)").matches ||
+                                 window.matchMedia("(display-mode: fullscreen)").matches)) ||
+          window.navigator.standalone === true;
+        window.addEventListener("beforeinstallprompt", function (e) {
+          e.preventDefault();
+          deferredPrompt = e;
+          if (!standalone) installBtn.hidden = false;
+        });
+        var isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
+        if (isIos && !standalone) installBtn.hidden = false;
+        installBtn.addEventListener("click", function () {
+          if (deferredPrompt) {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then(function () {
+              installBtn.hidden = true;
+              deferredPrompt = null;
+            });
+            return;
+          }
+          alert(isIos
+            ? "Install on iPhone/iPad: tap Share in Safari, then 'Add to Home Screen'."
+            : "Install: open the browser menu and choose 'Install app' / 'Add to Home Screen'.");
+        });
+        window.addEventListener("appinstalled", function () { installBtn.hidden = true; });
+      })();
+    </script>
+  </body>
+</html>
