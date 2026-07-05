@@ -7530,33 +7530,62 @@
   })();
   </script>
 
-<!-- ARCADE-PATCH: auto-fullscreen. Re-apply via scripts/patch-emu.sh after
-     replacing the AltirraSDL bundle files. -->
+<!-- ARCADE-PATCH: auto-fullscreen + floating menu button. Re-apply via
+     scripts/patch-emu.sh after replacing the AltirraSDL bundle files. -->
 <style>
-  /* Hide the emulator top bar whenever the window is fullscreen, including
-     fullscreen carried over from the picker page (element-fullscreen is
-     already handled by the shell's own :fullscreen rule). */
+  /* Hide the emulator top bar in fullscreen (covers fullscreen carried
+     over from the picker) for a clean view. */
   @media (display-mode: fullscreen) {
     body > header { display: none !important; }
   }
+  :fullscreen > header, :-webkit-full-screen > header { display: none !important; }
+  /* Floating menu button, shown only while fullscreen since the top-bar
+     Menu is hidden then. Tapping it opens the Gaming-Mode menu. */
+  #arcade-fs-menu {
+    position: fixed;
+    top: calc(env(safe-area-inset-top, 0px) + 8px);
+    right: calc(env(safe-area-inset-right, 0px) + 10px);
+    z-index: 2147483000;
+    width: 46px; height: 46px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,.28);
+    background: rgba(20,26,38,.5);
+    color: #fff; font-size: 22px; line-height: 1;
+    display: none;
+    align-items: center; justify-content: center;
+    backdrop-filter: blur(2px);
+    -webkit-tap-highlight-color: transparent;
+  }
+  @media (display-mode: fullscreen) { #arcade-fs-menu { display: flex; } }
+  :fullscreen #arcade-fs-menu, :-webkit-full-screen #arcade-fs-menu { display: flex; }
 </style>
+<button type="button" id="arcade-fs-menu" aria-label="Menu">&#9776;</button>
 <script>
   (function () {
+    function openMenu() {
+      try {
+        if (window.Module && Module._ATWasmOpenMenu) { Module._ATWasmOpenMenu(); return; }
+      } catch (e) {}
+      var b = document.getElementById('btn-menu');
+      if (b) b.click();
+    }
+    var fsBtn = document.getElementById('arcade-fs-menu');
+    if (fsBtn) fsBtn.addEventListener('click', function (e) { e.preventDefault(); openMenu(); });
+
+    // ?fs=1 : first tap anywhere enters fullscreen (gesture requirement).
     try {
       var p = new URLSearchParams(location.search);
-      if (p.get("fs") !== "1") return;
-      // requestFullscreen needs a user gesture: arm a one-shot handler so
-      // the very first tap (joystick, START, anywhere) enters fullscreen.
-      var arm = function () {
-        document.removeEventListener("pointerdown", arm, true);
-        if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
-          document.documentElement.requestFullscreen({ navigationUI: "hide" }).catch(function () {});
-        }
-      };
-      if (!document.fullscreenElement) {
-        document.addEventListener("pointerdown", arm, true);
+      if (p.get('fs') === '1' && !document.fullscreenElement && document.documentElement.requestFullscreen) {
+        var arm = function (ev) {
+          if (fsBtn && (ev.target === fsBtn || fsBtn.contains(ev.target))) return; // don't consume the menu tap
+          document.removeEventListener('pointerdown', arm, true);
+          if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen({ navigationUI: 'hide' }).catch(function () {});
+          }
+        };
+        document.addEventListener('pointerdown', arm, true);
       }
-    } catch (e) { /* ignore */ }
+    } catch (e) {}
   })();
 </script>
 </body>
