@@ -14,10 +14,6 @@
       "file": "AlleyCat.atr"
     },
     {
-      "name": "Archon",
-      "file": "Archon.atr"
-    },
-    {
       "name": "Arkanoid",
       "file": "Arkanoid.atr"
     },
@@ -83,10 +79,6 @@
       "file": "Dropzone.atr"
     },
     {
-      "name": "Escape from Epsilon",
-      "file": "EscapeFromEpsilon.atr"
-    },
-    {
       "name": "Flip and Flop",
       "file": "FlipAndFlop.atr"
     },
@@ -109,10 +101,6 @@
     {
       "name": "Gyruss",
       "file": "Gyruss.atr"
-    },
-    {
-      "name": "Gyruss II",
-      "file": "GyrussIi.atr"
     },
     {
       "name": "Hard Hat Willy",
@@ -156,7 +144,7 @@
     },
     {
       "name": "Moon Patrol",
-      "file": "MoonPatrol.atr"
+      "file": "MoonPatrol.xex"
     },
     {
       "name": "Mr Do",
@@ -239,10 +227,6 @@
       "file": "SpyVsSpy1.atr"
     },
     {
-      "name": "Spy Vs Spy 2",
-      "file": "SpyVsSpy2.atr"
-    },
-    {
       "name": "Spy's Demise",
       "file": "SpySDemise.atr"
     },
@@ -263,20 +247,12 @@
       "file": "Tapper.atr"
     },
     {
-      "name": "Universal Hero",
-      "file": "UniversalHero.atr"
-    },
-    {
       "name": "Up Up N Away",
       "file": "UpUpNAwayPulsar.atr"
     },
     {
       "name": "Vanguard",
       "file": "Vanguard.atr"
-    },
-    {
-      "name": "Volleyball",
-      "file": "Volleyball.atr"
     },
     {
       "name": "Zaxxon",
