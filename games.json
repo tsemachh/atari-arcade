@@ -7,60 +7,64 @@
     },
     {
       "name": "Action Biker",
-      "file": "ActionBiker.atr"
+      "file": "ActionBiker.xex"
     },
     {
       "name": "Alley Cat",
-      "file": "AlleyCat.atr"
+      "file": "AlleyCat.xex"
     },
     {
       "name": "Arkanoid",
-      "file": "Arkanoid.atr"
+      "file": "Arkanoid.xex",
+      "description": ""
     },
     {
       "name": "Arkanoid 2",
-      "file": "Arkanoid2.atr"
+      "file": "Arkanoid2.xex",
+      "description": ""
     },
     {
       "name": "Baja Buggies",
-      "file": "BajaBuggies.atr"
+      "file": "BajaBuggies.xex"
     },
     {
       "name": "Blue Max",
-      "file": "BlueMax.atr"
+      "file": "BlueMax.xex",
+      "description": ""
     },
     {
       "name": "Boulder Dash",
-      "file": "BoulderDash.atr",
+      "file": "BoulderDash.xex",
       "description": "First Star Software, 1984"
     },
     {
       "name": "Bounty Bob Strikes Back",
-      "file": "BountyBobStrikesBack.atr"
+      "file": "BountyBobStrikesBack.xex"
     },
     {
       "name": "Bristles",
-      "file": "Bristles.atr"
+      "file": "Bristles.xex",
+      "description": ""
     },
     {
       "name": "Bruce Lee",
-      "file": "BruceLee.atr"
+      "file": "BruceLee.xex"
     },
     {
       "name": "Choplifter",
-      "file": "Choplifter.atr"
+      "file": "Choplifter.xex"
     },
     {
       "name": "Colony",
-      "file": "Colony.atr"
+      "file": "Colony.xex"
     },
     {
       "name": "Cosmic Tunnels",
-      "file": "CosmicTunnels.atr"
+      "file": "CosmicTunnels.xex"
     },
     {
       "name": "Defender",
-      "file": "Defender.atr"
+      "file": "Defender.xex"
     },
     {
       "name": "Desmonds Dungeon",
@@ -68,43 +72,49 @@
     },
     {
       "name": "Donkey Kong",
-      "file": "DonkeyKong.atr"
+      "file": "DonkeyKong.xex",
+      "description": ""
     },
     {
       "name": "Donkey Kong Jr",
-      "file": "DonkeyKongJr.atr"
+      "file": "DonkeyKongJr.xex",
+      "description": ""
     },
     {
       "name": "Dropzone",
-      "file": "Dropzone.atr"
+      "file": "Dropzone.xex",
+      "description": ""
     },
     {
       "name": "Flip and Flop",
-      "file": "FlipAndFlop.atr"
+      "file": "FlipAndFlop.xex",
+      "description": ""
     },
     {
       "name": "Fort Apocalypse",
-      "file": "FortApocalypse.atr"
+      "file": "FortApocalypse.xex"
     },
     {
       "name": "Frogger",
-      "file": "Frogger.atr"
+      "file": "Frogger.xex"
     },
     {
       "name": "Frogger II",
-      "file": "FroggerIi.atr"
+      "file": "FroggerIi.xex",
+      "description": ""
     },
     {
       "name": "Galaxian",
-      "file": "Galaxian.atr"
+      "file": "Galaxian.xex",
+      "description": ""
     },
     {
       "name": "Gyruss",
-      "file": "Gyruss.atr"
+      "file": "Gyruss.xex"
     },
     {
       "name": "Hard Hat Willy",
-      "file": "HardHatWilly.atr"
+      "file": "HardHatWilly.xex"
     },
     {
       "name": "Ion Roadway",
@@ -112,15 +122,15 @@
     },
     {
       "name": "James Bond",
-      "file": "JamesBond.atr"
+      "file": "JamesBond.xex"
     },
     {
       "name": "Jet Boot Jack",
-      "file": "JetBootJack.atr"
+      "file": "JetBootJack.xex"
     },
     {
       "name": "Jungle Hunt",
-      "file": "JungleHunt.atr"
+      "file": "JungleHunt.xex"
     },
     {
       "name": "Karateka",
@@ -128,7 +138,7 @@
     },
     {
       "name": "Keystone Kapers",
-      "file": "KeystoneKapers.atr"
+      "file": "KeystoneKapers.xex"
     },
     {
       "name": "Krazy Shootout",
@@ -136,83 +146,88 @@
     },
     {
       "name": "Megamania",
-      "file": "Megamania.atr"
+      "file": "Megamania.xex"
     },
     {
       "name": "Montezuma's Revenge",
-      "file": "MontezumasRevenge.atr"
+      "file": "MontezumasRevenge.xex"
     },
     {
       "name": "Moon Patrol",
-      "file": "MoonPatrol.xex"
+      "file": "MoonPatrol.xex",
+      "description": ""
     },
     {
       "name": "Mr Do",
-      "file": "MrDoCrk.atr"
+      "file": "MrDoCrk.xex"
     },
     {
       "name": "Mr Robot & His Robot Factory",
-      "file": "MrRobotHisRobotFactoryCht.atr"
+      "file": "MrRobotHisRobotFactoryCht.xex"
     },
     {
       "name": "Ms Pacman",
-      "file": "MsPacman.atr"
+      "file": "MsPacman.xex"
     },
     {
       "name": "Nadral",
-      "file": "Nadral.atr"
+      "file": "Nadral.xex"
     },
     {
       "name": "Ninja",
-      "file": "Ninja.atr"
+      "file": "Ninja.xex",
+      "description": ""
     },
     {
       "name": "Oils Well",
-      "file": "OilsWell.atr"
+      "file": "OilsWell.xex"
     },
     {
       "name": "One On One",
-      "file": "OneOnOne.atr"
+      "file": "OneOnOne.xex"
     },
     {
       "name": "Pengo",
-      "file": "Pengo.atr"
+      "file": "Pengo.xex"
     },
     {
       "name": "Pharaoh's Curse",
-      "file": "PharaohSCurse.atr"
+      "file": "PharaohSCurse.xex"
     },
     {
       "name": "Pitfall",
-      "file": "PitfallI.atr"
+      "file": "PitfallI.xex"
     },
     {
       "name": "Pitfall II",
-      "file": "PitfallIi.atr"
+      "file": "PitfallIi.xex"
     },
     {
       "name": "Pitstop II",
-      "file": "PitstopIi.atr"
+      "file": "PitstopIi.xex"
     },
     {
       "name": "Pole Position",
-      "file": "PolePosition.atr"
+      "file": "PolePosition.xex",
+      "description": ""
     },
     {
       "name": "Pong",
-      "file": "Pong.atr"
+      "file": "Pong.xex"
     },
     {
       "name": "Pooyan",
-      "file": "Pooyan.atr"
+      "file": "Pooyan.xex",
+      "description": ""
     },
     {
       "name": "Popcorn",
-      "file": "Popcorn.atr"
+      "file": "Popcorn.xex"
     },
     {
       "name": "Qix",
-      "file": "Qix.atr"
+      "file": "Qix.xex",
+      "description": ""
     },
     {
       "name": "Soccer",
@@ -244,7 +259,7 @@
     },
     {
       "name": "Tapper",
-      "file": "Tapper.atr"
+      "file": "Tapper.xex"
     },
     {
       "name": "Up Up N Away",
@@ -252,15 +267,16 @@
     },
     {
       "name": "Vanguard",
-      "file": "Vanguard.atr"
+      "file": "Vanguard.xex"
     },
     {
       "name": "Zaxxon",
-      "file": "Zaxxon.atr"
+      "file": "Zaxxon.xex",
+      "description": ""
     },
     {
       "name": "Zorro",
-      "file": "ZorroCht.atr"
+      "file": "ZorroCht.xex"
     }
   ]
 }
