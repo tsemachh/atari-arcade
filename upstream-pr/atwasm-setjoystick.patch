@@ -1,0 +1,114 @@
+diff --git a/src/AltirraSDL/source/app/wasm_bridge.cpp b/src/AltirraSDL/source/app/wasm_bridge.cpp
+index 79056f9..3efdbbe 100644
+--- a/src/AltirraSDL/source/app/wasm_bridge.cpp
++++ b/src/AltirraSDL/source/app/wasm_bridge.cpp
+@@ -77,6 +77,7 @@ extern ATSimulator g_sim;
+ // the same way the touch controls + virtual keyboard do.  Through the
+ // netplay router so a hosted-session host edge propagates to peers.
+ #include "../netplay/netplay_input.h"
++#include "../input/touch_controls.h"
+ #include "gtia.h"
+ 
+ // Page-bar toggles (PAL/NTSC, CRT, Virtual Keyboard, Touch Controls,
+@@ -1486,6 +1487,19 @@ void ATWasmConsoleSwitch(int bit, int down) {
+ 	ATNetplayInput::RouteConsoleSwitch(&g_sim.GetGTIA(), b, down != 0);
+ }
+ 
++// JS-side joystick hook (tilt / gamepad / custom overlay).  Mirrors
++// ATWasmConsoleSwitch: dirMask is the 4-bit direction mask (bit0 L,
++// bit1 R, bit2 U, bit3 D), trigger is non-zero for fire A held.  State
++// persists until the next call; pass (0, 0) to centre the stick and
++// release fire.  Routes through the touch-control layer so it shares
++// the same unit-0 JoyStick1 / JoyButton0 codes the on-screen stick and
++// physical gamepads use — the default input map already binds those to
++// joystick port 0, so no extra binding is required.
++extern "C" EMSCRIPTEN_KEEPALIVE
++void ATWasmSetJoystick(int dirMask, int trigger) {
++	ATTouchControls_SetExternalJoystick((uint8)(dirMask & 0x0F), trigger != 0);
++}
++
+ // JS-side bar button (RESET) — cold reset.  The HTML page wraps this
+ // in a confirm() popup so an accidental click doesn't nuke a save in
+ // progress.  Cold reset only — warm reset is rarely useful from the
+diff --git a/src/AltirraSDL/source/input/touch_controls.cpp b/src/AltirraSDL/source/input/touch_controls.cpp
+index 6b240f8..8a19e48 100644
+--- a/src/AltirraSDL/source/input/touch_controls.cpp
++++ b/src/AltirraSDL/source/input/touch_controls.cpp
+@@ -61,6 +61,13 @@ static float s_joyBaseX = 0, s_joyBaseY = 0;  // Touch-down position (pixels)
+ static float s_joyCurX = 0, s_joyCurY = 0;    // Current position (pixels)
+ static uint8 s_joyDirMask = 0;                // Active directions (bit 0=L,1=R,2=U,3=D)
+ 
++// External joystick state (embedder hook: JS tilt/gamepad).  Tracked
++// separately from the touch stick so the two never clobber each other;
++// an embedder that drives this while the touch stick is idle gets clean
++// edge-diffed input.
++static uint8 s_extJoyDirMask = 0;
++static bool s_extTrigHeld = false;
++
+ // Fire button finger tracking
+ static SDL_FingerID s_fireFinger = 0;
+ static bool s_fireActive = false;
+@@ -153,6 +160,25 @@ static void ApplyDirectionMask(uint8 newMask, uint8 oldMask) {
+ 	}
+ }
+ 
++// Embedder hook — see touch_controls.h.  Diffs against the last
++// external state so only press/release edges reach ATInputManager.
++void ATTouchControls_SetExternalJoystick(uint8 dirMask, bool trigger) {
++	dirMask &= 0x0F;
++	if (dirMask != s_extJoyDirMask) {
++		ApplyDirectionMask(dirMask, s_extJoyDirMask);
++		s_extJoyDirMask = dirMask;
++	}
++	if (trigger != s_extTrigHeld) {
++		if (s_pInputManager) {
++			if (trigger)
++				s_pInputManager->OnButtonDown(0, kATInputCode_JoyButton0);
++			else
++				s_pInputManager->OnButtonUp(0, kATInputCode_JoyButton0);
++		}
++		s_extTrigHeld = trigger;
++	}
++}
++
+ // -------------------------------------------------------------------------
+ // Console switch helpers
+ // -------------------------------------------------------------------------
+@@ -206,6 +232,16 @@ void ATTouchControls_ReleaseAll() {
+ 	if (s_warpHeld)   { ATUISetTurboPulse(false); s_warpHeld = false; }
+ 	s_consoleActive = false;
+ 
++	// Release external (embedder) joystick + trigger
++	if (s_extJoyDirMask) {
++		ApplyDirectionMask(0, s_extJoyDirMask);
++		s_extJoyDirMask = 0;
++	}
++	if (s_extTrigHeld && s_pInputManager) {
++		s_pInputManager->OnButtonUp(0, kATInputCode_JoyButton0);
++		s_extTrigHeld = false;
++	}
++
+ 	s_menuTapped = false;
+ 	s_menuFingerActive = false;
+ 	s_menuFinger = 0;
+diff --git a/src/AltirraSDL/source/input/touch_controls.h b/src/AltirraSDL/source/input/touch_controls.h
+index da42e6e..569d5a9 100644
+--- a/src/AltirraSDL/source/input/touch_controls.h
++++ b/src/AltirraSDL/source/input/touch_controls.h
+@@ -44,3 +44,16 @@ bool ATTouchControls_IsActive();
+ // changes.  When on, every actionable touch triggers an Android
+ // Vibrator pulse (via ATAndroid_Vibrate).  Default: on.
+ void ATTouchControls_SetHapticEnabled(bool enabled);
++
++// External-input hook for embedders (e.g. a JS tilt/gamepad driver).
++// Sets the joystick direction mask and trigger (fire A) state directly,
++// bypassing the on-screen touch stick.
++//   dirMask: bit0 = left, bit1 = right, bit2 = up, bit3 = down
++//   trigger: fire A held
++// State persists until the next call; pass (0, false) to centre the
++// stick and release fire.  Only edges are forwarded to ATInputManager,
++// using the same unit-0 kATInputCode_JoyStick1* / JoyButton0 codes the
++// touch stick and physical gamepads use, so the default input map
++// routes it to joystick port 0 with no extra binding.  Independent of
++// the touch-stick state; ATTouchControls_ReleaseAll() clears it too.
++void ATTouchControls_SetExternalJoystick(uint8 dirMask, bool trigger);
