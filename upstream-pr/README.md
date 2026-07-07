@@ -12,12 +12,21 @@ Files touched (63 lines added, no deletions):
 - `source/input/touch_controls.cpp` — implement it (edge-diffed, cleared in `ReleaseAll`)
 - `source/app/wasm_bridge.cpp` — `extern "C" ATWasmSetJoystick(int dirMask, int trigger)`
 
-## Honest caveat
+## Status
 
-This was written by reading the source, **not compiled** — I don't have
-the Emscripten toolchain set up. Treat it as review-ready, build-pending.
-It's deliberately tiny and mirrors existing patterns exactly, so risk is
-low, but do a local build before merging.
+**Submitted upstream: [ilmenit/AltirraSDL#82](https://github.com/ilmenit/AltirraSDL/pull/82)**
+(2026-07-07, from fork branch `tsemachh:wasm-setjoystick-export`, commit
+`28f6dc0` on main HEAD `1d5a5f2`).
+
+## Build status
+
+Build-verified (2026-07-07): compiles and links clean with emsdk 5.0.6
+via the repo's `wasm-release` CMake preset, against `d2dc14a` (the
+commit the current nightly wasm asset was cut from) — and
+`git apply --check` passes on main HEAD `1d5a5f2` too.
+`_ATWasmSetJoystick` confirmed present in the generated `AltirraSDL.js`
+loader (`Module["_ATWasmSetJoystick"]`). No changes were needed to the
+patch.
 
 ## How to open the PR
 
@@ -40,7 +49,7 @@ ApplyDirectionMask / JoyButton0 paths. Addresses item 1 of #81."
 git push -u origin wasm-setjoystick-export
 gh pr create --repo ilmenit/AltirraSDL --fill \
   --title "WASM: add ATWasmSetJoystick export for JS-driven joystick input" \
-  --body "Implements item 1 of #81. Mirrors ATWasmConsoleSwitch; reuses the touch layer's ApplyDirectionMask + JoyButton0 so no new input-map bindings are needed. 63 lines, no deletions. Note: written from source review, not yet build-tested locally — please confirm the WASM build before merging."
+  --body "Implements item 1 of #81. Mirrors ATWasmConsoleSwitch; reuses the touch layer's ApplyDirectionMask + JoyButton0 so no new input-map bindings are needed. 63 lines, no deletions. Build-verified with emsdk 5.0.6 (wasm-release preset): links clean and _ATWasmSetJoystick is exported in the generated loader."
 ```
 
 Once merged and in a nightly, the JS tilt code on the arcade side is a
