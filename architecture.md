@@ -153,6 +153,18 @@ atari-arcade/
 └── .github/workflows/deploy-pages.yml    # Pages deploy + stamping
 ```
 
+## References
+
+- **[ilmenit/atari-800-skills](https://github.com/ilmenit/atari-800-skills)** —
+  AI-agent skill library for Atari 8-bit programming (6502, ANTIC/GTIA/POKEY,
+  OS vectors, MADS). Not needed for the embedding/bridge work done so far
+  (that follows AltirraSDL's own code patterns), but the go-to reference for:
+  - `system/input.md` when wiring tilt/gamepad JS to
+    `Module._ATWasmSetJoystick` (real-joystick behavior, trigger semantics);
+  - `system/compatibility.md` for per-game launch params in `games.json`
+    (PAL/NTSC, XL/XE quirks, which titles want `?joystick=dpad4`);
+  - everything else if the arcade ever ships Atari-side 6502 code.
+
 ## Key design decisions
 
 - **Static-only, zero build**: every file is servable as committed; deploys
