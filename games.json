@@ -3,268 +3,330 @@
     {
       "name": "River Raid",
       "file": "RiverRaid.xex",
+      "joystick": "analog",
       "description": "Activision, 1983 (title version)"
     },
     {
       "name": "Action Biker",
-      "file": "ActionBiker.xex"
+      "file": "ActionBiker.xex",
+      "joystick": "analog"
     },
     {
       "name": "Alley Cat",
-      "file": "AlleyCat.xex"
+      "file": "AlleyCat.xex",
+      "joystick": "analog"
     },
     {
       "name": "Arkanoid",
       "file": "Arkanoid.xex",
+      "joystick": "dpad4",
       "description": ""
     },
     {
       "name": "Baja Buggies",
-      "file": "BajaBuggies.xex"
+      "file": "BajaBuggies.xex",
+      "joystick": "analog"
     },
     {
       "name": "Blue Max",
       "file": "BlueMax.xex",
+      "joystick": "analog",
       "description": ""
     },
     {
       "name": "Boulder Dash",
       "file": "BoulderDash.xex",
+      "joystick": "dpad4",
       "description": "First Star Software, 1984"
     },
     {
       "name": "Bristles",
       "file": "Bristles.xex",
+      "joystick": "dpad8",
       "description": ""
     },
     {
       "name": "Bruce Lee",
-      "file": "BruceLee.xex"
+      "file": "BruceLee.xex",
+      "joystick": "dpad8"
     },
     {
       "name": "Choplifter",
-      "file": "Choplifter.xex"
+      "file": "Choplifter.xex",
+      "joystick": "analog"
     },
     {
       "name": "Colony",
-      "file": "Colony.xex"
+      "file": "Colony.xex",
+      "joystick": "analog"
     },
     {
       "name": "Cosmic Tunnels",
-      "file": "CosmicTunnels.xex"
+      "file": "CosmicTunnels.xex",
+      "joystick": "analog"
     },
     {
       "name": "Defender",
-      "file": "Defender.xex"
+      "file": "Defender.xex",
+      "joystick": "analog"
     },
     {
       "name": "Desmonds Dungeon",
-      "file": "DesmondsDungeon.atr"
+      "file": "DesmondsDungeon.atr",
+      "joystick": "dpad8"
     },
     {
       "name": "Donkey Kong",
       "file": "DonkeyKong.xex",
+      "joystick": "dpad8",
       "description": ""
     },
     {
       "name": "Donkey Kong Jr",
       "file": "DonkeyKongJr.xex",
+      "joystick": "dpad8",
       "description": ""
     },
     {
       "name": "Dropzone",
       "file": "Dropzone.xex",
+      "joystick": "analog",
       "description": ""
     },
     {
       "name": "Flip and Flop",
       "file": "FlipAndFlop.xex",
+      "joystick": "analog",
       "description": ""
     },
     {
       "name": "Fort Apocalypse",
-      "file": "FortApocalypse.xex"
+      "file": "FortApocalypse.xex",
+      "joystick": "analog"
     },
     {
       "name": "Frogger",
-      "file": "Frogger.xex"
+      "file": "Frogger.xex",
+      "joystick": "dpad4"
     },
     {
       "name": "Frogger II",
       "file": "FroggerIi.xex",
+      "joystick": "dpad4",
       "description": ""
     },
     {
       "name": "Galaxian",
       "file": "Galaxian.xex",
+      "joystick": "dpad4",
       "description": ""
     },
     {
       "name": "Gyruss",
-      "file": "Gyruss.xex"
+      "file": "Gyruss.xex",
+      "joystick": "analog"
     },
     {
       "name": "Hard Hat Willy",
-      "file": "HardHatWilly.xex"
+      "file": "HardHatWilly.xex",
+      "joystick": "dpad8"
     },
     {
       "name": "Ion Roadway",
-      "file": "IonRoadway.atr"
+      "file": "IonRoadway.atr",
+      "joystick": "analog"
     },
     {
       "name": "James Bond",
-      "file": "JamesBond.xex"
+      "file": "JamesBond.xex",
+      "joystick": "analog"
     },
     {
       "name": "Jet Boot Jack",
-      "file": "JetBootJack.xex"
+      "file": "JetBootJack.xex",
+      "joystick": "dpad8"
     },
     {
       "name": "Jungle Hunt",
-      "file": "JungleHunt.xex"
+      "file": "JungleHunt.xex",
+      "joystick": "analog"
     },
     {
       "name": "Karateka",
-      "file": "Karateka.atr"
+      "file": "Karateka.atr",
+      "joystick": "dpad8"
     },
     {
       "name": "Keystone Kapers",
-      "file": "KeystoneKapers.xex"
+      "file": "KeystoneKapers.xex",
+      "joystick": "dpad4"
     },
     {
       "name": "Krazy Shootout",
-      "file": "KrazyShootout.atr"
+      "file": "KrazyShootout.atr",
+      "joystick": "analog"
     },
     {
       "name": "Megamania",
-      "file": "Megamania.xex"
+      "file": "Megamania.xex",
+      "joystick": "dpad4"
     },
     {
       "name": "Montezuma's Revenge",
-      "file": "MontezumasRevenge.xex"
+      "file": "MontezumasRevenge.xex",
+      "joystick": "dpad8"
     },
     {
       "name": "Moon Patrol",
       "file": "MoonPatrol.xex",
+      "joystick": "dpad4",
       "description": ""
     },
     {
       "name": "Mr Do",
-      "file": "MrDoCrk.xex"
+      "file": "MrDoCrk.xex",
+      "joystick": "dpad4"
     },
     {
       "name": "Mr Robot & His Robot Factory",
-      "file": "MrRobotHisRobotFactoryCht.xex"
+      "file": "MrRobotHisRobotFactoryCht.xex",
+      "joystick": "dpad8"
     },
     {
       "name": "Ms Pacman",
-      "file": "MsPacman.xex"
+      "file": "MsPacman.xex",
+      "joystick": "dpad4"
     },
     {
       "name": "Nadral",
-      "file": "Nadral.xex"
+      "file": "Nadral.xex",
+      "joystick": "analog"
     },
     {
       "name": "Ninja",
       "file": "Ninja.xex",
+      "joystick": "dpad8",
       "description": ""
     },
     {
       "name": "Oils Well",
-      "file": "OilsWell.xex"
+      "file": "OilsWell.xex",
+      "joystick": "dpad4"
     },
     {
       "name": "One On One",
-      "file": "OneOnOne.xex"
+      "file": "OneOnOne.xex",
+      "joystick": "analog"
     },
     {
       "name": "Pengo",
-      "file": "Pengo.xex"
+      "file": "Pengo.xex",
+      "joystick": "dpad4"
     },
     {
       "name": "Pharaoh's Curse",
-      "file": "PharaohSCurse.xex"
+      "file": "PharaohSCurse.xex",
+      "joystick": "dpad8"
     },
     {
       "name": "Pitfall",
-      "file": "PitfallI.xex"
+      "file": "PitfallI.xex",
+      "joystick": "dpad8"
     },
     {
       "name": "Pitfall II",
-      "file": "PitfallIi.xex"
+      "file": "PitfallIi.xex",
+      "joystick": "dpad8"
     },
     {
       "name": "Pitstop II",
-      "file": "PitstopIi.xex"
+      "file": "PitstopIi.xex",
+      "joystick": "analog"
     },
     {
       "name": "Pole Position",
       "file": "PolePosition.xex",
+      "joystick": "analog",
       "description": ""
     },
     {
       "name": "Pong",
-      "file": "Pong.xex"
+      "file": "Pong.xex",
+      "joystick": "dpad4"
     },
     {
       "name": "Pooyan",
       "file": "Pooyan.xex",
+      "joystick": "dpad4",
       "description": ""
     },
     {
       "name": "Qix",
       "file": "Qix.xex",
+      "joystick": "dpad4",
       "description": ""
     },
     {
       "name": "Soccer",
       "file": "Soccer.xex",
+      "joystick": "analog",
       "description": "Thorn EMI Video"
     },
     {
       "name": "Space Invaders",
-      "file": "SpaceInvaders.atr"
+      "file": "SpaceInvaders.atr",
+      "joystick": "dpad4"
     },
     {
       "name": "Spy Vs Spy 1",
-      "file": "SpyVsSpy1.atr"
+      "file": "SpyVsSpy1.atr",
+      "joystick": "dpad8"
     },
     {
       "name": "Spy's Demise",
-      "file": "SpySDemise.atr"
+      "file": "SpySDemise.atr",
+      "joystick": "dpad4"
     },
     {
       "name": "Super Cobra",
-      "file": "SuperCobra.atr"
+      "file": "SuperCobra.atr",
+      "joystick": "analog"
     },
     {
       "name": "Super Zaxxon",
-      "file": "SuperZaxxon.atr"
+      "file": "SuperZaxxon.atr",
+      "joystick": "analog"
     },
     {
       "name": "Swat",
-      "file": "Swat.atr"
+      "file": "Swat.atr",
+      "joystick": "analog"
     },
     {
       "name": "Tapper",
-      "file": "Tapper.xex"
+      "file": "Tapper.xex",
+      "joystick": "dpad4"
     },
     {
       "name": "Up Up N Away",
-      "file": "UpUpNAwayPulsar.atr"
+      "file": "UpUpNAwayPulsar.atr",
+      "joystick": "analog"
     },
     {
       "name": "Vanguard",
-      "file": "Vanguard.xex"
+      "file": "Vanguard.xex",
+      "joystick": "analog"
     },
     {
       "name": "Zaxxon",
       "file": "Zaxxon.xex",
+      "joystick": "analog",
       "description": ""
     },
     {
       "name": "Zorro",
-      "file": "ZorroCht.xex"
+      "file": "ZorroCht.xex",
+      "joystick": "dpad8"
     }
   ]
 }

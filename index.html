@@ -139,12 +139,17 @@
 
         // Launch options: fast disk loading, stock 800XL (best compatibility
         // for 80s titles), back-button returns to this picker.
-        function launchUrl(file) {
-          return (
-            "emu/?lib=" + encodeURIComponent(file) +
-            "&fs=1&pal=1&crt=0&experience=convenient&addons=off" +
-            "&back_url=../&back_label=" + encodeURIComponent("⬅ Games")
-          );
+        function launchUrl(game) {
+          var url =
+            "emu/?lib=" + encodeURIComponent(game.file) +
+            "&fs=1&pal=1&crt=0&experience=convenient&addons=off";
+          // Per-game touch-joystick style (analog / dpad8 / dpad4). Omitted
+          // games fall back to the emulator default (analog).
+          if (game.joystick) {
+            url += "&joystick=" + encodeURIComponent(game.joystick);
+          }
+          url += "&back_url=../&back_label=" + encodeURIComponent("⬅ Games");
+          return url;
         }
 
         function render(filter) {
@@ -155,7 +160,7 @@
             if (norm && g.name.toLowerCase().indexOf(norm) === -1) return;
             var a = document.createElement("a");
             a.className = "card";
-            a.href = launchUrl(g.file);
+            a.href = launchUrl(g);
             var name = document.createElement("span");
             name.className = "name";
             name.textContent = g.name;
@@ -221,7 +226,7 @@
                   return e.name.toLowerCase() === wanted.toLowerCase() ||
                          e.file.toLowerCase() === wanted.toLowerCase();
                 });
-                if (g) location.href = launchUrl(g.file);
+                if (g) location.href = launchUrl(g);
               });
           }
         } catch (e) { /* ignore */ }
