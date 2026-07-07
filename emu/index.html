@@ -1432,7 +1432,7 @@
     <h1><a id="brand"
            href="https://github.com/ilmenit/AltirraSDL"
            target="_blank" rel="noopener"
-           title="AltirraSDL 4.40 · build d2dc14a1 (2026-07-03 13:05 UTC) — open the GitHub project in a new tab">AltirraSDL</a></h1>
+           title="AltirraSDL 4.40 · build a856e6aa (2026-07-07 14:30 UTC) — open the GitHub project in a new tab">AltirraSDL</a></h1>
     <!-- Lobby: navigate back to a curated software library / catalog
          page.  Hidden by default so a self-hosted bundle (no
          `config.json`, or no `lobbyUrl` field) doesn't show a button
@@ -1898,7 +1898,7 @@
     build.  See src/AltirraSDL/cmake/wasm_lib_deeplink.js for the
     contract.
   -->
-  <script src="wasm_lib_deeplink.js?v=d2dc14a1"></script>
+  <script src="wasm_lib_deeplink.js?v=a856e6aa"></script>
 
   <script>
   (() => {
@@ -2640,16 +2640,23 @@
         btnFullscreen.textContent = document.fullscreenElement
           ? '⤡ Exit Full Screen' : '⤢ Full Screen';
       };
+      const requestBrowserFullscreen = () => {
+        try {
+          if (document.fullscreenElement)
+            return;
+          const el = document.documentElement;
+          if (el.requestFullscreen) {
+            el.requestFullscreen({ navigationUI: 'hide' })
+              .catch(() => {});
+          }
+        } catch (e) {}
+      };
       btnFullscreen.addEventListener('click', () => {
         try {
           if (document.fullscreenElement) {
             document.exitFullscreen();
           } else {
-            const el = document.documentElement;
-            if (el.requestFullscreen) {
-              el.requestFullscreen({ navigationUI: 'hide' })
-                .catch(() => {});
-            }
+            requestBrowserFullscreen();
           }
         } catch (e) {}
         refocusCanvas();
@@ -2671,6 +2678,7 @@
         });
       });
       updateFullscreenLabel();
+      window.requestAltirraBrowserFullscreen = requestBrowserFullscreen;
     }
 
     // ───────────────────────────────────────────────────────────────────
@@ -7310,8 +7318,8 @@
         // opens the File Manager the bar shows real numbers
         // immediately rather than "checking…" for a frame.
         refreshStorageInfo();
-        jlog('runtime ready, build=d2dc14a1',
-             '(2026-07-03 13:05 UTC)');
+        jlog('runtime ready, build=a856e6aa',
+             '(2026-07-07 14:30 UTC)');
         // Log what's on disk after IDBFS syncfs completed so we can
         // confirm uploads survive reloads.  readdir throws if the
         // dir doesn't exist yet — swallow.
@@ -7498,9 +7506,19 @@
     const startOverlay = document.getElementById('start-overlay');
     const isManualStart = !!(window.__altirraLib
                              && window.__altirraLib.manualStart);
+    const wantsInitialFullscreen = !!(window.__altirraLib
+                                      && window.__altirraLib.fullscreen);
+    const requestInitialFullscreen = () => {
+      if (!wantsInitialFullscreen) return;
+      try {
+        if (typeof window.requestAltirraBrowserFullscreen === 'function')
+          window.requestAltirraBrowserFullscreen();
+      } catch (_) {}
+    };
     if (isManualStart && startOverlay) {
       const startGo = (e) => {
         if (e) e.preventDefault();
+        requestInitialFullscreen();
         // Hide the overlay immediately for snappy feedback; the wasm
         // download takes a few seconds even on a fast link.
         document.body.classList.remove('manual-start');
@@ -7521,6 +7539,13 @@
         if (e.key === 'Enter' || e.key === ' ') startGo(e);
       });
     } else {
+      if (wantsInitialFullscreen) {
+        const onFirstGesture = () => requestInitialFullscreen();
+        window.addEventListener('pointerdown', onFirstGesture,
+          { once: true, capture: true });
+        window.addEventListener('keydown', onFirstGesture,
+          { once: true, capture: true });
+      }
       // Default path: load AltirraSDL.js immediately.  Behaviour
       // matches every prior release for every URL that doesn't carry
       // ?autoplay=0 (lobby Solo / Together / Bare URL / self-hosted
@@ -7529,7 +7554,6 @@
     }
   })();
   </script>
-
 <!-- ARCADE-PATCH: auto-fullscreen + floating menu button. Re-apply via
      scripts/patch-emu.sh after replacing the AltirraSDL bundle files. -->
 <style>
