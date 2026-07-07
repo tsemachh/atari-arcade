@@ -42,7 +42,7 @@
     {
       "name": "Bristles",
       "file": "Bristles.xex",
-      "joystick": "dpad8",
+      "joystick": "dpad4",
       "description": ""
     },
     {
@@ -78,13 +78,13 @@
     {
       "name": "Donkey Kong",
       "file": "DonkeyKong.xex",
-      "joystick": "dpad8",
+      "joystick": "dpad4",
       "description": ""
     },
     {
       "name": "Donkey Kong Jr",
       "file": "DonkeyKongJr.xex",
-      "joystick": "dpad8",
+      "joystick": "dpad4",
       "description": ""
     },
     {
@@ -96,7 +96,7 @@
     {
       "name": "Flip and Flop",
       "file": "FlipAndFlop.xex",
-      "joystick": "analog",
+      "joystick": "dpad4",
       "description": ""
     },
     {
@@ -200,7 +200,7 @@
     {
       "name": "Nadral",
       "file": "Nadral.xex",
-      "joystick": "analog"
+      "joystick": "dpad8"
     },
     {
       "name": "Ninja",
@@ -300,7 +300,7 @@
     {
       "name": "Swat",
       "file": "Swat.atr",
-      "joystick": "analog"
+      "joystick": "dpad8"
     },
     {
       "name": "Tapper",
@@ -310,7 +310,7 @@
     {
       "name": "Up Up N Away",
       "file": "UpUpNAwayPulsar.atr",
-      "joystick": "analog"
+      "joystick": "dpad4"
     },
     {
       "name": "Vanguard",
