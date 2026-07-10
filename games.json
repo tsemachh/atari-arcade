@@ -117,6 +117,12 @@
       "description": ""
     },
     {
+      "name": "Ghostbusters",
+      "file": "Ghostbusters.xex",
+      "joystick": "dpad4",
+      "description": "Activision, 1985"
+    },
+    {
       "name": "Gyruss",
       "file": "Gyruss.xex",
       "joystick": "analog"
@@ -125,6 +131,11 @@
       "name": "Hard Hat Willy",
       "file": "HardHatWilly.xex",
       "joystick": "dpad8"
+    },
+    {
+      "name": "Hyperblast",
+      "file": "Hyperblast.xex",
+      "joystick": "analog"
     },
     {
       "name": "Ion Roadway",
@@ -160,6 +171,12 @@
       "name": "Krazy Shootout",
       "file": "KrazyShootout.atr",
       "joystick": "analog"
+    },
+    {
+      "name": "Mario Bros",
+      "file": "MarioBros.xex",
+      "joystick": "dpad4",
+      "description": "Nintendo/Atari, 1983"
     },
     {
       "name": "Megamania",
@@ -232,6 +249,12 @@
       "name": "Pitfall II",
       "file": "PitfallIi.xex",
       "joystick": "dpad8"
+    },
+    {
+      "name": "Pitstop",
+      "file": "Pitstop.xex",
+      "joystick": "analog",
+      "description": "Epyx, 1983"
     },
     {
       "name": "Pitstop II",
