@@ -148,6 +148,11 @@
           if (game.joystick) {
             url += "&joystick=" + encodeURIComponent(game.joystick);
           }
+          // Tilt steering (device orientation → joystick) for games that
+          // suit it; handled by the ARCADE-PATCH block in emu/index.html.
+          if (game.tilt) {
+            url += "&tilt=1";
+          }
           url += "&back_url=../&back_label=" + encodeURIComponent("⬅ Games");
           return url;
         }

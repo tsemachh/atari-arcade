@@ -254,18 +254,21 @@
       "name": "Pitstop",
       "file": "Pitstop.xex",
       "joystick": "analog",
-      "description": "Epyx, 1983"
+      "description": "Epyx, 1983",
+      "tilt": true
     },
     {
       "name": "Pitstop II",
       "file": "PitstopIi.xex",
-      "joystick": "analog"
+      "joystick": "analog",
+      "tilt": true
     },
     {
       "name": "Pole Position",
       "file": "PolePosition.xex",
       "joystick": "analog",
-      "description": ""
+      "description": "",
+      "tilt": true
     },
     {
       "name": "Pong",
