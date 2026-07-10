@@ -135,7 +135,7 @@
     {
       "name": "Hyperblast",
       "file": "Hyperblast.xex",
-      "joystick": "analog"
+      "joystick": "dpad4"
     },
     {
       "name": "Ion Roadway",
