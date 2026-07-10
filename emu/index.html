@@ -7587,31 +7587,53 @@
   #arcade-fs-menu  { right: calc(env(safe-area-inset-right, 0px) + 10px); }
   #arcade-bar-show { right: calc(env(safe-area-inset-right, 0px) + 66px); font-size: 26px; }
 
-  /* Auto-fire toggle tucked in the corner UNDER the on-canvas fire
-     button — styled after the CX40 joystick's red dome button. */
+  /* Auto-fire: a two-position slide switch like the AUTO FIRE toggle
+     on classic joysticks — vertical track, ON/OFF markings, red knob
+     that slides between them. Tucked under the on-canvas fire button. */
   #arcade-af {
     top: auto;
     bottom: calc(env(safe-area-inset-bottom, 0px) + 8px);
-    right: calc(env(safe-area-inset-right, 0px) + 10px);
-    font-size: 13px; font-weight: 800;
+    right: calc(env(safe-area-inset-right, 0px) + 12px);
+    width: 38px; height: 72px;
+    border-radius: 9px;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 5px 0 6px;
+    font-size: 8px; font-weight: 800;
     font-family: ui-sans-serif, system-ui, sans-serif;
-    letter-spacing: .03em;
-    color: rgba(255,255,255,.9);
-    background: radial-gradient(circle at 34% 30%,
-                #ff8a80 0%, #e53935 35%, #b71c1c 75%, #7f1010 100%);
-    border: 2px solid #5a0c0c;
-    box-shadow: inset 0 -3px 6px rgba(0,0,0,.45),
-                inset 0 2px 3px rgba(255,255,255,.35),
-                0 2px 5px rgba(0,0,0,.5);
-    opacity: .82;
-    text-shadow: 0 1px 2px rgba(0,0,0,.6);
+    letter-spacing: .06em;
+    color: rgba(255,255,255,.45);
+    background: linear-gradient(180deg, #202a3d, #0d1117);
+    border: 2px solid rgba(255,255,255,.3);
+    box-shadow: inset 0 2px 6px rgba(0,0,0,.7);
+    position: fixed;
   }
+  #arcade-af .af-lbl { position: relative; z-index: 1; line-height: 1; }
+  /* the sliding red knob */
+  #arcade-af::after {
+    content: '';
+    position: absolute;
+    left: 4px; right: 4px; height: 30px;
+    top: 36px;                     /* OFF = knob at the bottom */
+    border-radius: 6px;
+    background: linear-gradient(180deg, #d0d6e2 0%, #8f98ab 8%,
+                #b71c1c 8%, #e53935 45%, #7f1010 100%);
+    border: 1px solid #400808;
+    box-shadow: inset 0 1px 2px rgba(255,255,255,.4),
+                0 1px 3px rgba(0,0,0,.6);
+    transition: top .12s ease;
+  }
+  #arcade-af.on::after {
+    top: 5px;                      /* ON = knob slides up */
+  }
+  #arcade-af .af-on  { color: rgba(255,255,255,.5); }
+  #arcade-af .af-off { color: #ffb3ab; }
+  #arcade-af.on .af-on  { color: #ff5c4d; text-shadow: 0 0 8px rgba(255,80,60,.9); }
+  #arcade-af.on .af-off { color: rgba(255,255,255,.4); }
   #arcade-af.on {
-    opacity: 1;
-    border-color: #ffd24a;
-    box-shadow: inset 0 -3px 6px rgba(0,0,0,.45),
-                inset 0 2px 3px rgba(255,255,255,.35),
-                0 0 14px 3px rgba(255,80,60,.75);
+    border-color: #ff5c4d;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,.7),
+                0 0 12px rgba(255,80,60,.55);
   }
 
   /* Tilt-steering toggle, stacked above the AF button. */
@@ -7654,7 +7676,9 @@
      and AF stays above the on-canvas fire zone. */
   @media (max-height: 480px) {
     .arcade-fab { width: 40px; height: 40px; }
-    #arcade-af    { bottom: calc(env(safe-area-inset-bottom, 0px) + 6px); font-size: 12px; }
+    #arcade-af    { bottom: calc(env(safe-area-inset-bottom, 0px) + 6px); width: 34px; height: 64px; }
+    #arcade-af::after { height: 26px; top: 32px; }
+    #arcade-af.on::after { top: 5px; }
     #arcade-tilt  { bottom: calc(env(safe-area-inset-bottom, 0px) + 108px); font-size: 10px; }
     #arcade-start { bottom: calc(env(safe-area-inset-bottom, 0px) + 156px); font-size: 9px; }
   }
@@ -7699,7 +7723,7 @@
 </div>
 <button type="button" id="arcade-bar-show" class="arcade-fab" aria-label="Console keys">&#x2304;</button>
 <button type="button" id="arcade-fs-menu" class="arcade-fab" aria-label="Menu">&#9776;</button>
-<button type="button" id="arcade-af" class="arcade-fab" aria-label="Auto-fire">AF</button>
+<button type="button" id="arcade-af" class="arcade-fab" aria-label="Auto-fire"><span class="af-lbl af-on">ON</span><span class="af-lbl af-off">OFF</span></button>
 <button type="button" id="arcade-tilt" class="arcade-fab" aria-label="Tilt steering">TILT</button>
 <button type="button" id="arcade-start" class="arcade-fab" aria-label="Start">START</button>
 <script>
