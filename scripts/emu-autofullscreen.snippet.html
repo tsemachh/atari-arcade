@@ -31,11 +31,11 @@
   #arcade-fs-menu  { right: calc(env(safe-area-inset-right, 0px) + 10px); }
   #arcade-bar-show { right: calc(env(safe-area-inset-right, 0px) + 66px); font-size: 26px; }
 
-  /* Auto-fire toggle sits low on the right, above the on-canvas fire
-     zone — styled after the CX40 joystick's red dome button. */
+  /* Auto-fire toggle tucked in the corner UNDER the on-canvas fire
+     button — styled after the CX40 joystick's red dome button. */
   #arcade-af {
     top: auto;
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 150px);
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 8px);
     right: calc(env(safe-area-inset-right, 0px) + 10px);
     font-size: 13px; font-weight: 800;
     font-family: ui-sans-serif, system-ui, sans-serif;
@@ -61,7 +61,7 @@
   /* Tilt-steering toggle, stacked above the AF button. */
   #arcade-tilt {
     top: auto;
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 210px);
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 150px);
     right: calc(env(safe-area-inset-right, 0px) + 10px);
     font-size: 11px; font-weight: 800;
     font-family: ui-sans-serif, system-ui, sans-serif;
@@ -79,7 +79,7 @@
      always-visible spot in the right-side stack. */
   #arcade-start {
     top: auto;
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 270px);
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 210px);
     right: calc(env(safe-area-inset-right, 0px) + 10px);
     font-size: 10px; font-weight: 800;
     font-family: ui-sans-serif, system-ui, sans-serif;
@@ -98,9 +98,9 @@
      and AF stays above the on-canvas fire zone. */
   @media (max-height: 480px) {
     .arcade-fab { width: 40px; height: 40px; }
-    #arcade-af    { bottom: calc(env(safe-area-inset-bottom, 0px) + 108px); font-size: 12px; }
-    #arcade-tilt  { bottom: calc(env(safe-area-inset-bottom, 0px) + 156px); font-size: 10px; }
-    #arcade-start { bottom: calc(env(safe-area-inset-bottom, 0px) + 204px); font-size: 9px; }
+    #arcade-af    { bottom: calc(env(safe-area-inset-bottom, 0px) + 6px); font-size: 12px; }
+    #arcade-tilt  { bottom: calc(env(safe-area-inset-bottom, 0px) + 108px); font-size: 10px; }
+    #arcade-start { bottom: calc(env(safe-area-inset-bottom, 0px) + 156px); font-size: 9px; }
   }
 
   /* Compact console-keys row (replaces the desktop bar for play). */
