@@ -4,7 +4,8 @@
       "name": "River Raid",
       "file": "RiverRaid.xex",
       "joystick": "analog",
-      "description": "Activision, 1983 (title version)"
+      "description": "Activision, 1983 (title version)",
+      "tilt": true
     },
     {
       "name": "Action Biker",
