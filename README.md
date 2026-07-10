@@ -38,15 +38,9 @@ commit, and the service worker cache is busted on every deploy.
 
 ## Local patches to the emulator shell
 
-`emu/index.html` carries a small "ARCADE-PATCH" block:
-
-- **Auto-hiding top bar** — the console-key / menu bar hides ~3s after
-  load so play is full-height; reaching the top of the screen (hover or
-  tap) slides it back, and a floating ☰ button keeps the menu one tap
-  away while it's hidden. Works in windowed and fullscreen.
-- **`?fs=1`** — the first tap enters browser fullscreen (browsers require
-  a user gesture).
-
-After replacing the AltirraSDL bundle files, re-apply it with:
+`emu/index.html` carries a small "ARCADE-PATCH" block (auto-fullscreen:
+hides the top bar under `display-mode: fullscreen`, and `?fs=1` makes the
+first tap enter fullscreen). After replacing the AltirraSDL bundle files,
+re-apply it with:
 
     ./scripts/patch-emu.sh

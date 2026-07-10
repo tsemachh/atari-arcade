@@ -7554,25 +7554,17 @@
     }
   })();
   </script>
-<!-- ARCADE-PATCH: auto-fullscreen + auto-hiding top bar. Re-apply via
+<!-- ARCADE-PATCH: auto-fullscreen + floating menu button. Re-apply via
      scripts/patch-emu.sh after replacing the AltirraSDL bundle files. -->
 <style>
-  /* The top bar (console keys + Menu/Files/Region/CRT/Full-Screen)
-     auto-hides during play and slides back down when you reach for the
-     top of the screen. Applied in every mode (windowed + fullscreen),
-     so the buttons are there when you want them and gone when you don't. */
-  /* Hidden = removed from layout so the game reclaims the space and
-     plays full-height (the emulator re-fits its canvas on resize). */
-  body.arcade-bar-hidden > header { display: none !important; }
-  /* Invisible reveal strip pinned to the very top: hovering or tapping
-     it brings the bar back. Sits above the canvas, below the bar. */
-  #arcade-reveal {
-    position: fixed; top: 0; left: 0; right: 0; height: 26px;
-    z-index: 2147482000; background: transparent;
+  /* Hide the emulator top bar in fullscreen (covers fullscreen carried
+     over from the picker) for a clean view. */
+  @media (display-mode: fullscreen) {
+    body > header { display: none !important; }
   }
-  body:not(.arcade-bar-hidden) #arcade-reveal { pointer-events: none; }
-  /* Floating menu button — only while the bar is hidden, so the Gaming-
-     Mode menu is always one tap away without revealing the whole bar. */
+  :fullscreen > header, :-webkit-full-screen > header { display: none !important; }
+  /* Floating menu button, shown only while fullscreen since the top-bar
+     Menu is hidden then. Tapping it opens the Gaming-Mode menu. */
   #arcade-fs-menu {
     position: fixed;
     top: calc(env(safe-area-inset-top, 0px) + 8px);
@@ -7588,87 +7580,28 @@
     backdrop-filter: blur(2px);
     -webkit-tap-highlight-color: transparent;
   }
-  body.arcade-bar-hidden #arcade-fs-menu { display: flex; }
+  @media (display-mode: fullscreen) { #arcade-fs-menu { display: flex; } }
+  :fullscreen #arcade-fs-menu, :-webkit-full-screen #arcade-fs-menu { display: flex; }
 </style>
-<div id="arcade-reveal" aria-hidden="true"></div>
 <button type="button" id="arcade-fs-menu" aria-label="Menu">&#9776;</button>
 <script>
   (function () {
-    var body = document.body;
-    var HIDE_DELAY = 3000;   // ms of inactivity before the bar slides away
-    var TOP_ZONE   = 56;     // px from the top that count as "reaching up"
-    var hideTimer = null;
-
-    function header() { return document.querySelector('body > header'); }
-
-    // Nudge the emulator to re-fit its canvas after the bar shows/hides
-    // (it listens for window resize; the bar toggling changes the space).
-    function refit() {
-      try { window.dispatchEvent(new Event('resize')); } catch (e) {}
-      requestAnimationFrame(function () {
-        try { window.dispatchEvent(new Event('resize')); } catch (e) {}
-      });
-    }
-    function showBar() {
-      if (body.classList.contains('arcade-bar-hidden')) {
-        body.classList.remove('arcade-bar-hidden');
-        refit();
-      }
-      resetTimer();
-    }
-    function hideBar() {
-      if (!header() || body.classList.contains('arcade-bar-hidden')) return;
-      body.classList.add('arcade-bar-hidden');
-      refit();
-    }
-    function resetTimer() {
-      if (hideTimer) clearTimeout(hideTimer);
-      hideTimer = setTimeout(hideBar, HIDE_DELAY);
-    }
-
-    // Reveal when the pointer/touch reaches the top of the screen.
-    function nearTop(y) { return y != null && y <= TOP_ZONE; }
-    document.addEventListener('pointermove', function (e) {
-      if (nearTop(e.clientY)) showBar();
-    }, true);
-    document.addEventListener('pointerdown', function (e) {
-      if (nearTop(e.clientY)) showBar();
-    }, true);
-    document.addEventListener('touchstart', function (e) {
-      var t = e.touches && e.touches[0];
-      if (t && nearTop(t.clientY)) showBar();
-    }, { capture: true, passive: true });
-
-    // Keep the bar up while the user is actually using it.
-    document.addEventListener('pointermove', function (e) {
-      var h = header();
-      if (h && !body.classList.contains('arcade-bar-hidden') && h.contains(e.target)) resetTimer();
-    }, true);
-    document.addEventListener('pointerdown', function (e) {
-      var h = header();
-      if (h && h.contains(e.target)) showBar();
-    }, true);
-
-    // Floating menu button opens the Gaming-Mode menu without revealing
-    // the whole bar (Module export first, DOM click as fallback).
     function openMenu() {
-      try { if (window.Module && Module._ATWasmOpenMenu) { Module._ATWasmOpenMenu(); return; } } catch (e) {}
+      try {
+        if (window.Module && Module._ATWasmOpenMenu) { Module._ATWasmOpenMenu(); return; }
+      } catch (e) {}
       var b = document.getElementById('btn-menu');
       if (b) b.click();
     }
     var fsBtn = document.getElementById('arcade-fs-menu');
     if (fsBtn) fsBtn.addEventListener('click', function (e) { e.preventDefault(); openMenu(); });
 
-    // Show the bar on load so it's discoverable, then let it auto-hide.
-    showBar();
-
-    // ?fs=1 : first tap anywhere enters fullscreen (browsers require a
-    // user gesture). Independent of the bar logic above.
+    // ?fs=1 : first tap anywhere enters fullscreen (gesture requirement).
     try {
       var p = new URLSearchParams(location.search);
       if (p.get('fs') === '1' && !document.fullscreenElement && document.documentElement.requestFullscreen) {
         var arm = function (ev) {
-          if (fsBtn && (ev.target === fsBtn || fsBtn.contains(ev.target))) return;
+          if (fsBtn && (ev.target === fsBtn || fsBtn.contains(ev.target))) return; // don't consume the menu tap
           document.removeEventListener('pointerdown', arm, true);
           if (!document.fullscreenElement) {
             document.documentElement.requestFullscreen({ navigationUI: 'hide' }).catch(function () {});
