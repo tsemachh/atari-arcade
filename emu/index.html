@@ -7631,6 +7631,25 @@
     box-shadow: 0 0 12px rgba(92,200,255,.6);
   }
 
+  /* Momentary START button above the TILT toggle — most games need it
+     constantly (begin game / restart after death), so it earns a
+     always-visible spot in the right-side stack. */
+  #arcade-start {
+    top: auto;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 270px);
+    right: calc(env(safe-area-inset-right, 0px) + 10px);
+    font-size: 10px; font-weight: 800;
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    letter-spacing: .04em;
+    color: rgba(255,255,255,.85);
+    background: rgba(40,50,75,.6);
+  }
+  #arcade-start:active {
+    border-color: #ffd24a;
+    color: #ffd24a;
+    background: rgba(70,85,125,.8);
+  }
+
   /* Compact console-keys row (replaces the desktop bar for play). */
   #arcade-keys {
     position: fixed;
@@ -7674,6 +7693,7 @@
 <button type="button" id="arcade-fs-menu" class="arcade-fab" aria-label="Menu">&#9776;</button>
 <button type="button" id="arcade-af" class="arcade-fab" aria-label="Auto-fire">AF</button>
 <button type="button" id="arcade-tilt" class="arcade-fab" aria-label="Tilt steering">TILT</button>
+<button type="button" id="arcade-start" class="arcade-fab" aria-label="Start">START</button>
 <script>
   (function () {
     var params;
@@ -7745,6 +7765,22 @@
       });
     }
 
+    // ---- floating START button (momentary, true hold) -------------------
+    var startBtn = document.getElementById('arcade-start');
+    if (startBtn) startBtn.addEventListener('pointerdown', function (e) {
+      e.preventDefault(); e.stopPropagation();
+      consoleSwitch(1, true);
+      var up = function () {
+        consoleSwitch(1, false);
+        startBtn.removeEventListener('pointerup', up);
+        startBtn.removeEventListener('pointercancel', up);
+        startBtn.removeEventListener('pointerleave', up);
+      };
+      startBtn.addEventListener('pointerup', up);
+      startBtn.addEventListener('pointercancel', up);
+      startBtn.addEventListener('pointerleave', up);
+    });
+
     // ---- menu button ---------------------------------------------------
     function openMenu() {
       try { if (window.Module && Module._ATWasmOpenMenu) { Module._ATWasmOpenMenu(); return; } } catch (e) {}
@@ -7788,7 +7824,8 @@
     var tiltNeutral = null;
     var tiltOn = false;
     var DEAD_LR = 7;       // degrees of deadzone, left/right steer
-    var DEAD_UD = 4;       // degrees of deadzone, forward/back (accelerate/brake)
+    var DEAD_UD = 2.5;     // degrees of deadzone, forward/back — extra light so
+                           // accelerating barely tips the screen away from the eyes
     var tiltBtn = document.getElementById('arcade-tilt');
     function onTilt(ev) {
       if (ev.beta == null || ev.gamma == null) return;
