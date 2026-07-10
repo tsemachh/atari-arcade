@@ -23,11 +23,6 @@
       "description": ""
     },
     {
-      "name": "Baja Buggies",
-      "file": "BajaBuggies.xex",
-      "joystick": "analog"
-    },
-    {
       "name": "Blue Max",
       "file": "BlueMax.xex",
       "joystick": "analog",
