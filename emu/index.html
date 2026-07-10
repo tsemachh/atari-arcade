@@ -7650,6 +7650,16 @@
     background: rgba(70,85,125,.8);
   }
 
+  /* Phone-landscape viewports are short (~360-400px): compact the
+     right-side stack so START stays clear of the ⌄/☰ corner buttons
+     and AF stays above the on-canvas fire zone. */
+  @media (max-height: 480px) {
+    .arcade-fab { width: 40px; height: 40px; }
+    #arcade-af    { bottom: calc(env(safe-area-inset-bottom, 0px) + 108px); font-size: 12px; }
+    #arcade-tilt  { bottom: calc(env(safe-area-inset-bottom, 0px) + 156px); font-size: 10px; }
+    #arcade-start { bottom: calc(env(safe-area-inset-bottom, 0px) + 204px); font-size: 9px; }
+  }
+
   /* Compact console-keys row (replaces the desktop bar for play). */
   #arcade-keys {
     position: fixed;
