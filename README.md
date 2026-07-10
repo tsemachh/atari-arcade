@@ -36,6 +36,24 @@ Pushes to `main` deploy automatically via GitHub Pages (Settings → Pages →
 Source: GitHub Actions). The picker footer shows the exact deploy time and
 commit, and the service worker cache is busted on every deploy.
 
+## License / attribution
+
+The emulator under `emu/` is **[AltirraSDL](https://github.com/ilmenit/AltirraSDL)**
+by Jakub Dębski, a portable fork of **[Altirra](https://www.virtualdub.org/altirra.html)**
+by Avery Lee, licensed **GPLv2** (see [`emu/LICENSE`](emu/LICENSE)). The
+vendored bundle is the upstream nightly built from commit
+[`a856e6aa`](https://github.com/ilmenit/AltirraSDL/commit/a856e6aa); its
+corresponding source is the upstream repository at that commit. Our
+modifications to the emulator's host page (the ARCADE-PATCH block injected
+into `emu/index.html`, source in
+[`scripts/emu-autofullscreen.snippet.html`](scripts/emu-autofullscreen.snippet.html))
+are published in this repository under the same GPLv2 terms.
+
+Everything else in this repository (picker, service worker, scripts) is
+separate from the emulator and not covered by the GPL. Game images under
+`emu/library/` are the property of their respective copyright holders,
+preserved via [Homesoft](http://www.mushca.com/f/atari/).
+
 ## Local patches to the emulator shell
 
 `emu/index.html` carries a small "ARCADE-PATCH" block (auto-fullscreen:
