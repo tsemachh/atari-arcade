@@ -1,18 +1,20 @@
-<!-- ARCADE-PATCH: auto-fullscreen + floating menu button. Re-apply via
-     scripts/patch-emu.sh after replacing the AltirraSDL bundle files. -->
+<!-- ARCADE-PATCH: auto-fullscreen + auto-hiding top bar (v2). Re-apply via
+     scripts/patch-emu.sh after replacing the AltirraSDL bundle files.
+
+     v2 design note: v1 revealed the bar when a touch neared the top edge,
+     which meant gameplay taps could reveal it and the NEXT tap could hit
+     "⬅ Games" and exit the game. v2 only ever reveals via a deliberate tap
+     on the ⌄ chevron button; gameplay touches can never bring the bar back. -->
 <style>
-  /* Hide the emulator top bar in fullscreen (covers fullscreen carried
-     over from the picker) for a clean view. */
-  @media (display-mode: fullscreen) {
-    body > header { display: none !important; }
-  }
-  :fullscreen > header, :-webkit-full-screen > header { display: none !important; }
-  /* Floating menu button, shown only while fullscreen since the top-bar
-     Menu is hidden then. Tapping it opens the Gaming-Mode menu. */
-  #arcade-fs-menu {
+  /* Hidden = removed from layout so the game reclaims the full height
+     (the emulator re-fits its canvas on window resize). */
+  body.arcade-bar-hidden > header { display: none !important; }
+
+  /* Floating corner buttons, shown only while the bar is hidden:
+     ⌄ reveals the bar, ☰ opens the Gaming-Mode menu directly. */
+  .arcade-fab {
     position: fixed;
     top: calc(env(safe-area-inset-top, 0px) + 8px);
-    right: calc(env(safe-area-inset-right, 0px) + 10px);
     z-index: 2147483000;
     width: 46px; height: 46px;
     border-radius: 50%;
@@ -24,28 +26,82 @@
     backdrop-filter: blur(2px);
     -webkit-tap-highlight-color: transparent;
   }
-  @media (display-mode: fullscreen) { #arcade-fs-menu { display: flex; } }
-  :fullscreen #arcade-fs-menu, :-webkit-full-screen #arcade-fs-menu { display: flex; }
+  #arcade-fs-menu { right: calc(env(safe-area-inset-right, 0px) + 10px); }
+  #arcade-bar-show { right: calc(env(safe-area-inset-right, 0px) + 66px); font-size: 26px; }
+  body.arcade-bar-hidden .arcade-fab { display: flex; }
 </style>
-<button type="button" id="arcade-fs-menu" aria-label="Menu">&#9776;</button>
+<button type="button" id="arcade-bar-show" class="arcade-fab" aria-label="Show top bar">&#x2304;</button>
+<button type="button" id="arcade-fs-menu" class="arcade-fab" aria-label="Menu">&#9776;</button>
 <script>
   (function () {
+    var body = document.body;
+    var HIDE_DELAY = 4000;   // ms of bar inactivity before it hides again
+    var hideTimer = null;
+
+    function header() { return document.querySelector('body > header'); }
+
+    // Nudge the emulator to re-fit its canvas after the bar shows/hides.
+    function refit() {
+      try { window.dispatchEvent(new Event('resize')); } catch (e) {}
+      requestAnimationFrame(function () {
+        try { window.dispatchEvent(new Event('resize')); } catch (e) {}
+      });
+    }
+    function armHide() {
+      if (hideTimer) clearTimeout(hideTimer);
+      hideTimer = setTimeout(hideBar, HIDE_DELAY);
+    }
+    function showBar() {
+      if (body.classList.contains('arcade-bar-hidden')) {
+        body.classList.remove('arcade-bar-hidden');
+        refit();
+      }
+      armHide();
+    }
+    function hideBar() {
+      if (!header() || body.classList.contains('arcade-bar-hidden')) return;
+      body.classList.add('arcade-bar-hidden');
+      refit();
+    }
+
+    // The ONLY way to reveal the bar: the ⌄ button. The revealing tap is
+    // fully consumed so it can never click through to a bar button.
+    var showBtn = document.getElementById('arcade-bar-show');
+    if (showBtn) showBtn.addEventListener('click', function (e) {
+      e.preventDefault(); e.stopPropagation();
+      showBar();
+    });
+
+    // While the bar is visible, using it keeps it alive; idle re-hides it.
+    document.addEventListener('pointerdown', function (e) {
+      var h = header();
+      if (h && !body.classList.contains('arcade-bar-hidden') && h.contains(e.target)) armHide();
+    }, true);
+    document.addEventListener('pointermove', function (e) {
+      var h = header();
+      if (h && !body.classList.contains('arcade-bar-hidden') && h.contains(e.target)) armHide();
+    }, true);
+
+    // Floating menu button opens the Gaming-Mode menu without the bar.
     function openMenu() {
-      try {
-        if (window.Module && Module._ATWasmOpenMenu) { Module._ATWasmOpenMenu(); return; }
-      } catch (e) {}
+      try { if (window.Module && Module._ATWasmOpenMenu) { Module._ATWasmOpenMenu(); return; } } catch (e) {}
       var b = document.getElementById('btn-menu');
       if (b) b.click();
     }
     var fsBtn = document.getElementById('arcade-fs-menu');
     if (fsBtn) fsBtn.addEventListener('click', function (e) { e.preventDefault(); openMenu(); });
 
-    // ?fs=1 : first tap anywhere enters fullscreen (gesture requirement).
+    // Bar starts visible (discoverable), then auto-hides.
+    armHide();
+
+    // ?fs=1 : first tap anywhere enters fullscreen (browsers require a
+    // user gesture). Taps on the floating buttons are not consumed.
     try {
       var p = new URLSearchParams(location.search);
       if (p.get('fs') === '1' && !document.fullscreenElement && document.documentElement.requestFullscreen) {
         var arm = function (ev) {
-          if (fsBtn && (ev.target === fsBtn || fsBtn.contains(ev.target))) return; // don't consume the menu tap
+          if (fsBtn && (ev.target === fsBtn || fsBtn.contains(ev.target))) return;
+          if (showBtn && (ev.target === showBtn || showBtn.contains(ev.target))) return;
           document.removeEventListener('pointerdown', arm, true);
           if (!document.fullscreenElement) {
             document.documentElement.requestFullscreen({ navigationUI: 'hide' }).catch(function () {});
