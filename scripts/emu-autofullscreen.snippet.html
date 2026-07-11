@@ -107,8 +107,7 @@
      constantly (begin game / restart after death), so it earns a
      always-visible spot in the right-side stack. */
   #arcade-start {
-    top: auto;
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 190px);
+    top: calc(env(safe-area-inset-top, 0px) + 132px);   /* right under TILT */
     right: calc(env(safe-area-inset-right, 0px) + 10px);
     width: 60px; height: 60px;
     font-size: 13px; font-weight: 800;
@@ -133,7 +132,7 @@
     #arcade-af.on::after { left: 35px; }
     #arcade-tilt  { top: calc(env(safe-area-inset-top, 0px) + 54px); width: 52px; height: 52px; }
     #arcade-tilt svg { width: 32px; height: 32px; }
-    #arcade-start { bottom: calc(env(safe-area-inset-bottom, 0px) + 126px); width: 52px; height: 52px; font-size: 11px; }
+    #arcade-start { top: calc(env(safe-area-inset-top, 0px) + 114px); bottom: auto; width: 52px; height: 52px; font-size: 11px; }
   }
 
   /* Compact console-keys row (replaces the desktop bar for play). */
@@ -178,7 +177,7 @@
 <button type="button" id="arcade-bar-show" class="arcade-fab" aria-label="Console keys">&#x2304;</button>
 <button type="button" id="arcade-fs-menu" class="arcade-fab" aria-label="Menu">&#9776;</button>
 <button type="button" id="arcade-af" class="arcade-fab" aria-label="Auto-fire"><span class="af-lbl af-off">OFF</span><span class="af-lbl af-on">ON</span></button>
-<button type="button" id="arcade-tilt" class="arcade-fab" aria-label="Tilt steering"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="8.8" y="2.6" width="9" height="14.6" rx="1.7" transform="rotate(18 13.3 9.9)"/><path d="M4.4 17.6 Q 12 22.8 19.6 17.6"/><path d="M4.4 17.6 l2.8 -0.6 M4.4 17.6 l1 2.6"/><path d="M19.6 17.6 l-2.8 -0.6 M19.6 17.6 l-1 2.6"/></svg></button>
+<button type="button" id="arcade-tilt" class="arcade-fab" aria-label="Tilt steering"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4.6" y="5.6" width="14.8" height="9.2" rx="1.7" transform="rotate(-12 12 10.2)"/><path d="M4.4 17.6 Q 12 22.8 19.6 17.6"/><path d="M4.4 17.6 l2.8 -0.6 M4.4 17.6 l1 2.6"/><path d="M19.6 17.6 l-2.8 -0.6 M19.6 17.6 l-1 2.6"/></svg></button>
 <button type="button" id="arcade-start" class="arcade-fab" aria-label="Start">START</button>
 <script>
   (function () {
