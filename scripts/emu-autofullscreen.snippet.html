@@ -360,18 +360,26 @@
       }
     }
 
-    // ---- ?fs=1 : first tap enters fullscreen ---------------------------
+    // ---- ?fs=1 : tap enters fullscreen ---------------------------------
+    // Android Chrome rejects fullscreen requests made from start-of-touch
+    // events (pointerdown/touchstart) — only end-of-gesture events carry
+    // reliable user activation. So we arm on pointerup/touchend/click and
+    // keep retrying on every tap until fullscreen actually takes; the
+    // listeners are removed only on success.
     try {
-      if (params.get('fs') === '1' && !document.fullscreenElement && document.documentElement.requestFullscreen) {
-        var arm = function (ev) {
+      if (params.get('fs') === '1' && document.documentElement.requestFullscreen) {
+        var fsEvents = ['pointerup', 'touchend', 'click'];
+        var fsDisarm = function () {
+          fsEvents.forEach(function (n) { document.removeEventListener(n, fsArm, true); });
+        };
+        var fsArm = function (ev) {
           var t = ev.target;
           if (t && t.closest && t.closest('.arcade-fab, #arcade-keys')) return;
-          document.removeEventListener('pointerdown', arm, true);
-          if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen({ navigationUI: 'hide' }).catch(function () {});
-          }
+          if (document.fullscreenElement) { fsDisarm(); return; }
+          document.documentElement.requestFullscreen({ navigationUI: 'hide' })
+            .then(fsDisarm, function () { /* rejected — stay armed, retry next tap */ });
         };
-        document.addEventListener('pointerdown', arm, true);
+        fsEvents.forEach(function (n) { document.addEventListener(n, fsArm, true); });
       }
     } catch (e) {}
   })();
