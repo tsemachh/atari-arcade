@@ -93,9 +93,10 @@
   #arcade-tilt {
     top: calc(env(safe-area-inset-top, 0px) + 62px);
     right: calc(env(safe-area-inset-right, 0px) + 10px);
-    color: rgba(255,255,255,.75);
+    width: 60px; height: 60px;
+    color: rgba(255,255,255,.78);
   }
-  #arcade-tilt svg { width: 26px; height: 26px; }
+  #arcade-tilt svg { width: 38px; height: 38px; }
   #arcade-tilt.on {
     border-color: #5cc8ff;
     color: #5cc8ff;
@@ -130,9 +131,9 @@
     #arcade-af    { bottom: calc(env(safe-area-inset-bottom, 0px) + 5px); width: 72px; height: 30px; }
     #arcade-af::after { width: 30px; left: 3px; top: 3px; bottom: 3px; }
     #arcade-af.on::after { left: 35px; }
-    #arcade-tilt  { top: calc(env(safe-area-inset-top, 0px) + 54px); }
-    #arcade-tilt svg { width: 22px; height: 22px; }
-    #arcade-start { bottom: calc(env(safe-area-inset-bottom, 0px) + 150px); width: 52px; height: 52px; font-size: 11px; }
+    #arcade-tilt  { top: calc(env(safe-area-inset-top, 0px) + 54px); width: 52px; height: 52px; }
+    #arcade-tilt svg { width: 32px; height: 32px; }
+    #arcade-start { bottom: calc(env(safe-area-inset-bottom, 0px) + 126px); width: 52px; height: 52px; font-size: 11px; }
   }
 
   /* Compact console-keys row (replaces the desktop bar for play). */
@@ -177,7 +178,7 @@
 <button type="button" id="arcade-bar-show" class="arcade-fab" aria-label="Console keys">&#x2304;</button>
 <button type="button" id="arcade-fs-menu" class="arcade-fab" aria-label="Menu">&#9776;</button>
 <button type="button" id="arcade-af" class="arcade-fab" aria-label="Auto-fire"><span class="af-lbl af-off">OFF</span><span class="af-lbl af-on">ON</span></button>
-<button type="button" id="arcade-tilt" class="arcade-fab" aria-label="Tilt steering"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="8.2" y="3.4" width="9.6" height="16.4" rx="1.8" transform="rotate(14 13 11.6)"/><path d="M4.2 19.6q3 2.6 7 2.7" /><path d="M5.6 21.9l-1.7-2.5 2.9-.6" fill="currentColor" stroke="none"/></svg></button>
+<button type="button" id="arcade-tilt" class="arcade-fab" aria-label="Tilt steering"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="8.8" y="2.6" width="9" height="14.6" rx="1.7" transform="rotate(18 13.3 9.9)"/><path d="M4.4 17.6 Q 12 22.8 19.6 17.6"/><path d="M4.4 17.6 l2.8 -0.6 M4.4 17.6 l1 2.6"/><path d="M19.6 17.6 l-2.8 -0.6 M19.6 17.6 l-1 2.6"/></svg></button>
 <button type="button" id="arcade-start" class="arcade-fab" aria-label="Start">START</button>
 <script>
   (function () {
