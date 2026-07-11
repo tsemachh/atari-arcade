@@ -51,7 +51,13 @@ self.addEventListener("fetch", function (event) {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
+  // Network-first for page navigations (picker + emulator HTML) so a new
+  // deploy shows up on the very next launch — no cache-first "one version
+  // behind" dance. Offline still falls back to the cached copy. The
+  // versioned assets (?v= tags) and game files stay cache-first below.
   const alwaysFresh =
+    request.mode === "navigate" ||
+    url.pathname.endsWith(".html") ||
     url.pathname.endsWith("games.json") ||
     url.pathname.endsWith("build-info.json");
 
