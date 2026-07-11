@@ -7586,6 +7586,12 @@
   body.arcade-mode .arcade-fab { display: flex; }
   #arcade-fs-menu  { right: calc(env(safe-area-inset-right, 0px) + 10px); }
   #arcade-bar-show { right: calc(env(safe-area-inset-right, 0px) + 66px); font-size: 26px; }
+  /* Fullscreen button: visible only while NOT fullscreen (and not an
+     installed app) — one deliberate tap beats waiting for the armed
+     first-tap to land. Hides itself once fullscreen engages. */
+  #arcade-fs { right: calc(env(safe-area-inset-right, 0px) + 122px); font-size: 19px; }
+  body.arcade-mode #arcade-fs { display: none; }
+  body.arcade-mode.arcade-show-fs #arcade-fs { display: flex; }
 
   /* Auto-fire: a two-position slide switch like the AUTO FIRE toggle
      on classic joysticks — vertical track, ON/OFF markings, red knob
@@ -7594,11 +7600,11 @@
     top: auto;
     bottom: calc(env(safe-area-inset-bottom, 0px) + 8px);
     right: calc(env(safe-area-inset-right, 0px) + 12px);
-    width: 38px; height: 72px;
+    width: 76px; height: 38px;
     border-radius: 9px;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: space-between;
-    padding: 5px 0 6px;
+    padding: 0 7px 0 8px;
     font-size: 8px; font-weight: 800;
     font-family: ui-sans-serif, system-ui, sans-serif;
     letter-spacing: .06em;
@@ -7608,23 +7614,23 @@
     box-shadow: inset 0 2px 6px rgba(0,0,0,.7);
     position: fixed;
   }
-  #arcade-af .af-lbl { position: relative; z-index: 1; line-height: 1; }
+  #arcade-af .af-lbl { position: relative; z-index: 1; line-height: 1; align-self: center; }
   /* the sliding red knob */
   #arcade-af::after {
     content: '';
     position: absolute;
-    left: 4px; right: 4px; height: 30px;
-    top: 36px;                     /* OFF = knob at the bottom */
+    top: 4px; bottom: 4px; width: 32px;
+    left: 4px;                     /* OFF = knob on the left */
     border-radius: 6px;
     background: linear-gradient(180deg, #d0d6e2 0%, #8f98ab 8%,
                 #b71c1c 8%, #e53935 45%, #7f1010 100%);
     border: 1px solid #400808;
     box-shadow: inset 0 1px 2px rgba(255,255,255,.4),
                 0 1px 3px rgba(0,0,0,.6);
-    transition: top .12s ease;
+    transition: left .12s ease;
   }
   #arcade-af.on::after {
-    top: 5px;                      /* ON = knob slides up */
+    left: 36px;                    /* ON = knob slides right */
   }
   #arcade-af .af-on  { color: rgba(255,255,255,.5); }
   #arcade-af .af-off { color: #ffb3ab; }
@@ -7676,9 +7682,9 @@
      and AF stays above the on-canvas fire zone. */
   @media (max-height: 480px) {
     .arcade-fab { width: 40px; height: 40px; }
-    #arcade-af    { bottom: calc(env(safe-area-inset-bottom, 0px) + 6px); width: 34px; height: 64px; }
-    #arcade-af::after { height: 26px; top: 32px; }
-    #arcade-af.on::after { top: 5px; }
+    #arcade-af    { bottom: calc(env(safe-area-inset-bottom, 0px) + 6px); width: 66px; height: 34px; }
+    #arcade-af::after { width: 27px; left: 4px; top: 4px; bottom: 4px; }
+    #arcade-af.on::after { left: 31px; }
     #arcade-tilt  { bottom: calc(env(safe-area-inset-bottom, 0px) + 108px); font-size: 10px; }
     #arcade-start { bottom: calc(env(safe-area-inset-bottom, 0px) + 156px); font-size: 9px; }
   }
@@ -7721,9 +7727,10 @@
   <button type="button" data-key="4">OPTION</button>
   <button type="button" class="ak-reset" data-act="reset">RESET</button>
 </div>
+<button type="button" id="arcade-fs" class="arcade-fab" aria-label="Full screen">&#x26F6;</button>
 <button type="button" id="arcade-bar-show" class="arcade-fab" aria-label="Console keys">&#x2304;</button>
 <button type="button" id="arcade-fs-menu" class="arcade-fab" aria-label="Menu">&#9776;</button>
-<button type="button" id="arcade-af" class="arcade-fab" aria-label="Auto-fire"><span class="af-lbl af-on">ON</span><span class="af-lbl af-off">OFF</span></button>
+<button type="button" id="arcade-af" class="arcade-fab" aria-label="Auto-fire"><span class="af-lbl af-off">OFF</span><span class="af-lbl af-on">ON</span></button>
 <button type="button" id="arcade-tilt" class="arcade-fab" aria-label="Tilt steering">TILT</button>
 <button type="button" id="arcade-start" class="arcade-fab" aria-label="Start">START</button>
 <script>
@@ -7914,6 +7921,31 @@
       } else {
         startTilt();
       }
+    }
+
+    // ---- explicit fullscreen button (shown only when not fullscreen) ----
+    var fsBtn2 = document.getElementById('arcade-fs');
+    function isAppMode() {
+      try {
+        return (window.matchMedia && (window.matchMedia('(display-mode: fullscreen)').matches ||
+                                      window.matchMedia('(display-mode: standalone)').matches)) ||
+               window.navigator.standalone === true;
+      } catch (e) { return false; }
+    }
+    function updateFsBtn() {
+      var want = !isAppMode() && !document.fullscreenElement &&
+                 !!document.documentElement.requestFullscreen;
+      body.classList.toggle('arcade-show-fs', want);
+    }
+    if (fsBtn2) {
+      fsBtn2.addEventListener('click', function (e) {
+        e.preventDefault(); e.stopPropagation();
+        try {
+          document.documentElement.requestFullscreen({ navigationUI: 'hide' }).catch(function () {});
+        } catch (err) {}
+      });
+      document.addEventListener('fullscreenchange', updateFsBtn);
+      updateFsBtn();
     }
 
     // ---- ?fs=1 : tap enters fullscreen ---------------------------------
