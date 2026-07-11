@@ -42,9 +42,12 @@
      that slides between them. Tucked under the on-canvas fire button. */
   #arcade-af {
     top: auto;
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 8px);
-    right: calc(env(safe-area-inset-right, 0px) + 12px);
-    width: 76px; height: 38px;
+    /* The emulator draws fire A as a 72px circle centred 60px from the
+       right edge, 48px above the bottom — the switch matches its width
+       and sits centred in the strip directly below it. */
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 7px);
+    right: calc(env(safe-area-inset-right, 0px) + 24px);
+    width: 72px; height: 34px;
     border-radius: 9px;
     flex-direction: row;
     justify-content: space-between;
@@ -63,8 +66,8 @@
   #arcade-af::after {
     content: '';
     position: absolute;
-    top: 4px; bottom: 4px; width: 32px;
-    left: 4px;                     /* OFF = knob on the left */
+    top: 3px; bottom: 3px; width: 31px;
+    left: 3px;                     /* OFF = knob on the left */
     border-radius: 6px;
     background: linear-gradient(180deg, #f07a70 0%, #e53935 40%, #7f1010 100%);
     border: 1px solid #400808;
@@ -73,7 +76,7 @@
     transition: left .12s ease;
   }
   #arcade-af.on::after {
-    left: 36px;                    /* ON = knob slides right */
+    left: 34px;                    /* ON = knob slides right */
   }
   #arcade-af .af-on  { color: rgba(255,255,255,.45); }
   #arcade-af .af-off { color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.8); }
@@ -85,16 +88,14 @@
                 0 0 12px rgba(255,80,60,.55);
   }
 
-  /* Tilt-steering toggle, stacked above the AF button. */
+  /* Tilt-steering toggle — upper right, under the ☰ corner button,
+     well away from the fire zone. Shows a tilting-phone icon. */
   #arcade-tilt {
-    top: auto;
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 150px);
+    top: calc(env(safe-area-inset-top, 0px) + 62px);
     right: calc(env(safe-area-inset-right, 0px) + 10px);
-    font-size: 11px; font-weight: 800;
-    font-family: ui-sans-serif, system-ui, sans-serif;
-    letter-spacing: .04em;
     color: rgba(255,255,255,.75);
   }
+  #arcade-tilt svg { width: 26px; height: 26px; }
   #arcade-tilt.on {
     border-color: #5cc8ff;
     color: #5cc8ff;
@@ -106,9 +107,10 @@
      always-visible spot in the right-side stack. */
   #arcade-start {
     top: auto;
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 210px);
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 190px);
     right: calc(env(safe-area-inset-right, 0px) + 10px);
-    font-size: 10px; font-weight: 800;
+    width: 60px; height: 60px;
+    font-size: 13px; font-weight: 800;
     font-family: ui-sans-serif, system-ui, sans-serif;
     letter-spacing: .04em;
     color: rgba(255,255,255,.85);
@@ -125,11 +127,12 @@
      and AF stays above the on-canvas fire zone. */
   @media (max-height: 480px) {
     .arcade-fab { width: 40px; height: 40px; }
-    #arcade-af    { bottom: calc(env(safe-area-inset-bottom, 0px) + 6px); width: 66px; height: 34px; }
-    #arcade-af::after { width: 27px; left: 4px; top: 4px; bottom: 4px; }
-    #arcade-af.on::after { left: 31px; }
-    #arcade-tilt  { bottom: calc(env(safe-area-inset-bottom, 0px) + 108px); font-size: 10px; }
-    #arcade-start { bottom: calc(env(safe-area-inset-bottom, 0px) + 156px); font-size: 9px; }
+    #arcade-af    { bottom: calc(env(safe-area-inset-bottom, 0px) + 5px); width: 72px; height: 30px; }
+    #arcade-af::after { width: 30px; left: 3px; top: 3px; bottom: 3px; }
+    #arcade-af.on::after { left: 35px; }
+    #arcade-tilt  { top: calc(env(safe-area-inset-top, 0px) + 54px); }
+    #arcade-tilt svg { width: 22px; height: 22px; }
+    #arcade-start { bottom: calc(env(safe-area-inset-bottom, 0px) + 150px); width: 52px; height: 52px; font-size: 11px; }
   }
 
   /* Compact console-keys row (replaces the desktop bar for play). */
@@ -174,7 +177,7 @@
 <button type="button" id="arcade-bar-show" class="arcade-fab" aria-label="Console keys">&#x2304;</button>
 <button type="button" id="arcade-fs-menu" class="arcade-fab" aria-label="Menu">&#9776;</button>
 <button type="button" id="arcade-af" class="arcade-fab" aria-label="Auto-fire"><span class="af-lbl af-off">OFF</span><span class="af-lbl af-on">ON</span></button>
-<button type="button" id="arcade-tilt" class="arcade-fab" aria-label="Tilt steering">TILT</button>
+<button type="button" id="arcade-tilt" class="arcade-fab" aria-label="Tilt steering"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="8.2" y="3.4" width="9.6" height="16.4" rx="1.8" transform="rotate(14 13 11.6)"/><path d="M4.2 19.6q3 2.6 7 2.7" /><path d="M5.6 21.9l-1.7-2.5 2.9-.6" fill="currentColor" stroke="none"/></svg></button>
 <button type="button" id="arcade-start" class="arcade-fab" aria-label="Start">START</button>
 <script>
   (function () {
