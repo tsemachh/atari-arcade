@@ -7622,20 +7622,19 @@
     top: 4px; bottom: 4px; width: 32px;
     left: 4px;                     /* OFF = knob on the left */
     border-radius: 6px;
-    background: linear-gradient(180deg, #d0d6e2 0%, #8f98ab 8%,
-                #b71c1c 8%, #e53935 45%, #7f1010 100%);
+    background: linear-gradient(180deg, #f07a70 0%, #e53935 40%, #7f1010 100%);
     border: 1px solid #400808;
-    box-shadow: inset 0 1px 2px rgba(255,255,255,.4),
+    box-shadow: inset 0 1px 2px rgba(255,255,255,.25),
                 0 1px 3px rgba(0,0,0,.6);
     transition: left .12s ease;
   }
   #arcade-af.on::after {
     left: 36px;                    /* ON = knob slides right */
   }
-  #arcade-af .af-on  { color: rgba(255,255,255,.5); }
-  #arcade-af .af-off { color: #ffb3ab; }
-  #arcade-af.on .af-on  { color: #ff5c4d; text-shadow: 0 0 8px rgba(255,80,60,.9); }
-  #arcade-af.on .af-off { color: rgba(255,255,255,.4); }
+  #arcade-af .af-on  { color: rgba(255,255,255,.45); }
+  #arcade-af .af-off { color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.8); }
+  #arcade-af.on .af-on  { color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.8); }
+  #arcade-af.on .af-off { color: rgba(255,255,255,.45); text-shadow: none; }
   #arcade-af.on {
     border-color: #ff5c4d;
     box-shadow: inset 0 2px 6px rgba(0,0,0,.7),
