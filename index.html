@@ -155,6 +155,11 @@
             url += "&tilt=1";
           }
           url += "&back_url=../&back_label=" + encodeURIComponent("⬅ Games");
+          // Opening the picker with ?tv=1 (smart-TV browsers) propagates
+          // TV-remote controls into every game launch.
+          try {
+            if (new URLSearchParams(location.search).get("tv") === "1") url += "&tv=1";
+          } catch (e) { /* ignore */ }
           return url;
         }
 

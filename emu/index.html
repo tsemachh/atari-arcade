@@ -7950,6 +7950,63 @@
       updateFsBtn();
     }
 
+    // ---- GoatCounter: per-game path --------------------------------------
+    // GoatCounter strips query strings, so every launch would count as
+    // /emu/. Report /play/<Game> instead — the dashboard's Paths view
+    // then doubles as a per-game popularity table. Must be set before
+    // the async count.js (end of this patch) executes.
+    try {
+      var gcLib = params.get('lib') || '';
+      if (gcLib) window.goatcounter = { path: '/play/' + gcLib.replace(/\.[^.]+$/, '') };
+    } catch (e) {}
+
+    // ---- ?tv=1 : TV-remote controls (CE-HTML/HbbTV key codes) ------------
+    // D-pad → joystick, OK/Enter → fire, Red/Green/Yellow → START/SELECT/
+    // OPTION, Blue → auto-fire toggle, Play/Pause → pause, Back (Tizen
+    // 10009 / webOS 461) → picker. Capture-phase + preventDefault so SDL
+    // never sees the arrows. Some TV browsers drop keyup, so a watchdog
+    // auto-releases any direction not refreshed by key-repeat for 350ms.
+    if (params.get('tv') === '1') (function () {
+      var KEY_DIRS = { 37: 1, 39: 2, 38: 4, 40: 8 };   // arrows → L R U D bits
+      var held = {};                                    // keyCode → last-seen ms
+      function apply() {
+        var m = 0;
+        for (var k in held) m |= KEY_DIRS[k] || 0;
+        if (m !== ext.mask) { ext.mask = m; pushExt(); }
+      }
+      setInterval(function () {
+        var now = Date.now(), dirty = false;
+        for (var k in held) if (now - held[k] > 350) { delete held[k]; dirty = true; }
+        if (dirty) apply();
+      }, 120);
+      function fire(down) { if (ext.fire !== down) { ext.fire = down; pushExt(); } }
+      document.addEventListener('keydown', function (e) {
+        var c = e.keyCode;
+        if (KEY_DIRS[c]) { held[c] = Date.now(); apply(); }
+        else if (c === 13) fire(true);
+        else if (c === 403) consoleSwitch(1, true);
+        else if (c === 404) consoleSwitch(2, true);
+        else if (c === 405) consoleSwitch(4, true);
+        else if (c === 406) { if (afBtn) afBtn.click(); }
+        else if (c === 415 || c === 179 || c === 19) {
+          try { if (window.Module && Module._ATWasmTogglePause) Module._ATWasmTogglePause(); } catch (err) {}
+        }
+        else if (c === 10009 || c === 461) { location.href = (params.get('back_url')) || '../'; return; }
+        else return;                       // unhandled keys pass through
+        e.preventDefault(); e.stopPropagation();
+      }, true);
+      document.addEventListener('keyup', function (e) {
+        var c = e.keyCode;
+        if (KEY_DIRS[c]) { delete held[c]; apply(); }
+        else if (c === 13) fire(false);
+        else if (c === 403) consoleSwitch(1, false);
+        else if (c === 404) consoleSwitch(2, false);
+        else if (c === 405) consoleSwitch(4, false);
+        else return;
+        e.preventDefault(); e.stopPropagation();
+      }, true);
+    })();
+
     // ---- ?fs=1 : tap enters fullscreen ---------------------------------
     // Android Chrome rejects fullscreen requests made from start-of-touch
     // events (pointerdown/touchstart) — only end-of-gesture events carry
