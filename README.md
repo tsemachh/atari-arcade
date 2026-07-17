@@ -56,9 +56,28 @@ preserved via [Homesoft](http://www.mushca.com/f/atari/).
 
 ## Local patches to the emulator shell
 
-`emu/index.html` carries a small "ARCADE-PATCH" block (auto-fullscreen:
-hides the top bar under `display-mode: fullscreen`, and `?fs=1` makes the
-first tap enter fullscreen). After replacing the AltirraSDL bundle files,
-re-apply it with:
+`emu/index.html` carries an "ARCADE-PATCH" block (source:
+`scripts/emu-autofullscreen.snippet.html`) that activates on `?lib=`
+launches:
+
+- **Arcade chrome** — hides the desktop bar from the first frame; ⌄
+  toggles a compact START/SELECT/OPTION/RESET row, ☰ opens the menu,
+  ⛶ appears while not fullscreen.
+- **`?fs=1`** — a tap enters browser fullscreen (retried on
+  end-of-gesture events until it takes).
+- **TILT toggle + `?tilt=1`** — device-orientation steering (extra
+  sensitivity on forward/back so the screen stays visible while
+  accelerating).
+- **AUTO FIRE slide switch** — pulses the trigger at ~11 Hz via
+  `ATWasmSetJoystick`.
+- **`?tv=1`** — smart-TV remote controls (CE-HTML/HbbTV key codes):
+  D-pad → joystick, OK → fire, Red/Green/Yellow → START/SELECT/OPTION,
+  Blue → auto-fire, Play/Pause → pause, Back → picker. Open the picker
+  with `?tv=1` and every launch inherits it.
+- **Analytics** — GoatCounter (atari-arcade.goatcounter.com),
+  cookie-less. Game launches report as `/play/<Game>`, so the
+  dashboard's Paths view doubles as a per-game popularity table.
+
+After replacing the AltirraSDL bundle files, re-apply with:
 
     ./scripts/patch-emu.sh
