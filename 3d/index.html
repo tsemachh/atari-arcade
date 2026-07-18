@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Atari Arcade — 3D</title>
+    <meta name="theme-color" content="#0d1117" />
+    <link rel="icon" href="../icons/icon-192.png" />
+    <style>
+      :root { --accent: #5cc8ff; --muted: #9db0d3; }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; height: 100%; background: #05070c; overflow: hidden;
+        font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+      #gl { position: fixed; inset: 0; display: block; touch-action: none; }
+      .ui { position: fixed; left: 0; right: 0; text-align: center; color: #e6eefc;
+            pointer-events: none; z-index: 2; }
+      .ui.top { top: calc(env(safe-area-inset-top, 0px) + 14px); }
+      .ui.top h1 { margin: 0; font-size: 22px; letter-spacing: .1em; font-weight: 800;
+                   text-shadow: 0 0 18px rgba(92,200,255,.6); }
+      .ui.top h1 span { color: var(--accent); }
+      .ui.top .hint { color: var(--muted); font-size: 12px; margin-top: 4px; }
+      .ui.bottom { bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); }
+      .ui.bottom a { pointer-events: auto; color: var(--accent); text-decoration: none;
+                     font-size: 13px; border: 1px solid rgba(92,200,255,.4);
+                     border-radius: 999px; padding: 7px 16px; background: rgba(13,17,23,.6); }
+      #tip { position: fixed; left: 50%; transform: translateX(-50%);
+             bottom: calc(env(safe-area-inset-bottom, 0px) + 54px);
+             color: #e6eefc; font-size: 14px; font-weight: 700; z-index: 2;
+             text-shadow: 0 0 10px rgba(92,200,255,.8); pointer-events: none;
+             opacity: 0; transition: opacity .15s; }
+      #loading { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+                 color: var(--muted); font-size: 14px; z-index: 3; background: #05070c;
+                 transition: opacity .4s; }
+    </style>
+  </head>
+  <body>
+    <canvas id="gl"></canvas>
+    <div class="ui top">
+      <h1>ATARI <span>ARCADE</span> · 3D</h1>
+      <div class="hint">drag to spin · tap a poster to play</div>
+    </div>
+    <div id="tip"></div>
+    <div class="ui bottom"><a href="../">&larr; classic view</a></div>
+    <div id="loading">Booting the arcade room&hellip;</div>
+
+    <script src="three.min.js"></script>
+    <script>
+      (function () {
+        "use strict";
+        var canvas = document.getElementById("gl");
+        var tip = document.getElementById("tip");
+        var loading = document.getElementById("loading");
+        var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+        var scene = new THREE.Scene();
+        scene.fog = new THREE.Fog(0x05070c, 14, 30);
+        var camera = new THREE.PerspectiveCamera(70, 1, 0.1, 100);
+        camera.position.set(0, 0, 0.001);
+
+        // starfield
+        (function () {
+          var g = new THREE.BufferGeometry();
+          var n = 900, pos = new Float32Array(n * 3);
+          for (var i = 0; i < n; i++) {
+            var r = 30 + Math.random() * 40;
+            var t = Math.random() * Math.PI * 2;
+            var p = Math.acos(2 * Math.random() - 1);
+            pos[i * 3] = r * Math.sin(p) * Math.cos(t);
+            pos[i * 3 + 1] = r * Math.cos(p);
+            pos[i * 3 + 2] = r * Math.sin(p) * Math.sin(t);
+          }
+          g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+          scene.add(new THREE.Points(g, new THREE.PointsMaterial({ color: 0x5cc8ff, size: 0.06, transparent: true, opacity: 0.7 })));
+        })();
+
+        scene.add(new THREE.AmbientLight(0xffffff, 1.0));
+
+        var group = new THREE.Group();
+        scene.add(group);
+
+        var CARD_W = 3.36, CARD_H = 2.86, LABEL_H = 0.46;
+        var tvMode = false;
+        try { tvMode = new URLSearchParams(location.search).get("tv") === "1"; } catch (e) {}
+
+        function launchUrl(g) {
+          var url = "../emu/?lib=" + encodeURIComponent(g.file) +
+            "&fs=1&pal=1&crt=0&experience=convenient&addons=off";
+          if (g.joystick) url += "&joystick=" + encodeURIComponent(g.joystick);
+          if (g.tilt) url += "&tilt=1";
+          url += "&back_url=../3d/&back_label=" + encodeURIComponent("⬅ Games");
+          if (tvMode) url += "&tv=1";
+          return url;
+        }
+
+        // poster + name strip baked into one canvas texture
+        function cardTexture(img, name, done) {
+          var c = document.createElement("canvas");
+          c.width = 336; c.height = 286;
+          var x = c.getContext("2d");
+          x.fillStyle = "#000"; x.fillRect(0, 0, 336, 286);
+          if (img) x.drawImage(img, 0, 0, 336, 240);
+          x.fillStyle = "#131a26"; x.fillRect(0, 240, 336, 46);
+          x.strokeStyle = "rgba(92,200,255,.35)"; x.strokeRect(0.5, 0.5, 335, 285);
+          x.fillStyle = "#e6eefc";
+          x.font = "700 22px system-ui, sans-serif";
+          x.textAlign = "center"; x.textBaseline = "middle";
+          var label = name.length > 26 ? name.slice(0, 25) + "…" : name;
+          x.fillText(label, 168, 264);
+          var t = new THREE.CanvasTexture(c);
+          t.anisotropy = renderer.capabilities.getMaxAnisotropy();
+          done(t);
+        }
+
+        var pickables = [];
+        function build(games) {
+          var perRow = Math.ceil(games.length / 3);
+          var R = Math.max(8, perRow * (CARD_W + 0.55) / (2 * Math.PI));
+          var rows = [CARD_H + 0.5, 0, -(CARD_H + 0.5)];
+          games.forEach(function (g, i) {
+            var row = Math.floor(i / perRow);
+            var col = i % perRow;
+            var theta = (col / perRow) * Math.PI * 2 + (row * 0.5 * (Math.PI * 2 / perRow));
+            var geo = new THREE.PlaneGeometry(CARD_W, CARD_H);
+            var mat = new THREE.MeshBasicMaterial({ color: 0x0d1117 });
+            var mesh = new THREE.Mesh(geo, mat);
+            mesh.position.set(R * Math.sin(theta), rows[row] || 0, -R * Math.cos(theta));
+            mesh.rotation.y = -theta + Math.PI;
+            mesh.userData = { game: g };
+            group.add(mesh);
+            pickables.push(mesh);
+            var img = new Image();
+            img.onload = function () {
+              cardTexture(img, g.name, function (t) { mat.map = t; mat.color.set(0xffffff); mat.needsUpdate = true; });
+            };
+            img.onerror = function () {
+              cardTexture(null, g.name, function (t) { mat.map = t; mat.color.set(0xffffff); mat.needsUpdate = true; });
+            };
+            img.src = "../posters/" + g.file.replace(/\.[^.]+$/, "") + ".png";
+          });
+        }
+
+        // drag / inertia / idle spin
+        var rotY = 0, vel = 0, dragging = false, lastX = 0, movedPx = 0, downAt = 0;
+        function onDown(e) {
+          dragging = true; movedPx = 0; lastX = e.clientX; vel = 0; downAt = Date.now();
+        }
+        function onMove(e) {
+          if (!dragging) { hover(e); return; }
+          var dx = e.clientX - lastX; lastX = e.clientX;
+          movedPx += Math.abs(dx);
+          var d = dx * 0.0035;
+          rotY += d; vel = d;
+        }
+        function onUp(e) {
+          if (!dragging) return;
+          dragging = false;
+          if (movedPx < 8 && Date.now() - downAt < 600) pick(e);
+        }
+        canvas.addEventListener("pointerdown", onDown);
+        window.addEventListener("pointermove", onMove);
+        window.addEventListener("pointerup", onUp);
+
+        var ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+        function cast(e) {
+          ndc.x = (e.clientX / window.innerWidth) * 2 - 1;
+          ndc.y = -(e.clientY / window.innerHeight) * 2 + 1;
+          ray.setFromCamera(ndc, camera);
+          var hit = ray.intersectObjects(pickables)[0];
+          return hit ? hit.object : null;
+        }
+        var hovered = null;
+        function hover(e) {
+          var m = cast(e);
+          if (m !== hovered) {
+            if (hovered) hovered.scale.set(1, 1, 1);
+            hovered = m;
+            if (m) { m.scale.set(1.07, 1.07, 1); tip.textContent = m.userData.game.name; tip.style.opacity = 1; canvas.style.cursor = "pointer"; }
+            else { tip.style.opacity = 0; canvas.style.cursor = "grab"; }
+          }
+        }
+        function pick(e) {
+          var m = cast(e);
+          if (m) location.href = launchUrl(m.userData.game);
+        }
+
+        function resize() {
+          var w = window.innerWidth, h = window.innerHeight;
+          renderer.setSize(w, h, false);
+          camera.aspect = w / h;
+          camera.updateProjectionMatrix();
+        }
+        window.addEventListener("resize", resize);
+        resize();
+
+        var clock = new THREE.Clock();
+        function tick() {
+          requestAnimationFrame(tick);
+          var dt = clock.getDelta();
+          if (!dragging) {
+            rotY += vel;
+            vel *= 0.95;
+            if (Math.abs(vel) < 0.0004) rotY += dt * 0.03; // idle drift
+          }
+          group.rotation.y = rotY;
+          renderer.render(scene, camera);
+        }
+
+        fetch("../games.json", { cache: "no-cache" })
+          .then(function (r) { return r.json(); })
+          .then(function (d) {
+            build((d && d.games) || []);
+            tick();
+            loading.style.opacity = 0;
+            setTimeout(function () { loading.remove(); }, 500);
+          })
+          .catch(function () { loading.textContent = "Could not load the game list."; });
+      })();
+    </script>
+    <script data-goatcounter="https://atari-arcade.goatcounter.com/count"
+            async src="//gc.zgo.at/count.js"></script>
+  </body>
+</html>

@@ -69,6 +69,8 @@
         margin: 0 auto;
       }
       .chip {
+        text-decoration: none;
+        display: inline-block;
         border: 1px solid var(--border);
         background: var(--panel2);
         color: var(--muted);
@@ -315,6 +317,11 @@
             });
             chipsEl.appendChild(b);
           });
+          var td = document.createElement("a");
+          td.className = "chip";
+          td.href = "3d/" + (location.search.indexOf("tv=1") > -1 ? "?tv=1" : "");
+          td.textContent = "\uD83D\uDD79 3D view";
+          chipsEl.appendChild(td);
         }
 
         // --- "Can't find a game" → log the miss + offer a request link ---
