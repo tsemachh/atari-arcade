@@ -118,15 +118,27 @@
       .card {
         display: flex;
         flex-direction: column;
-        gap: 4px;
-        padding: 14px 12px;
-        min-height: 64px;
         border-radius: 12px;
         border: 1px solid var(--border);
         background: linear-gradient(180deg, var(--panel), var(--panel2));
         color: var(--text);
         text-decoration: none;
         transition: border-color 0.12s;
+        overflow: hidden;
+      }
+      .card .shot {
+        width: 100%;
+        aspect-ratio: 336 / 240;
+        object-fit: cover;
+        display: block;
+        background: #000;
+        border-bottom: 1px solid var(--border);
+      }
+      .card .meta {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        padding: 10px 12px 12px;
       }
       .card:hover, .card:focus-visible { border-color: var(--accent); }
       .card .name {
@@ -222,16 +234,26 @@
           a.className = "card";
           a.href = launchUrl(g);
           a.dataset.file = g.file;
+          var img = document.createElement("img");
+          img.className = "shot";
+          img.loading = "lazy";
+          img.alt = "";
+          img.src = "posters/" + g.file.replace(/\.[^.]+$/, "") + ".png";
+          img.addEventListener("error", function () { img.remove(); });
+          a.appendChild(img);
+          var meta = document.createElement("span");
+          meta.className = "meta";
           var name = document.createElement("span");
           name.className = "name";
           name.textContent = g.name;
-          a.appendChild(name);
+          meta.appendChild(name);
           if (!mini && g.description) {
             var d = document.createElement("span");
             d.className = "desc";
             d.textContent = g.description;
-            a.appendChild(d);
+            meta.appendChild(d);
           }
+          a.appendChild(meta);
           return a;
         }
         function renderRecent() {
