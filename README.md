@@ -41,8 +41,8 @@ commit, and the service worker cache is busted on every deploy.
 The emulator under `emu/` is **[AltirraSDL](https://github.com/ilmenit/AltirraSDL)**
 by Jakub Dębski, a portable fork of **[Altirra](https://www.virtualdub.org/altirra.html)**
 by Avery Lee, licensed **GPLv2** (see [`emu/LICENSE`](emu/LICENSE)). The
-vendored bundle is the upstream nightly built from commit
-[`a856e6aa`](https://github.com/ilmenit/AltirraSDL/commit/a856e6aa); its
+vendored bundle is built from upstream commit
+[`27d37558`](https://github.com/ilmenit/AltirraSDL/commit/27d37558); its
 corresponding source is the upstream repository at that commit. Our
 modifications to the emulator's host page (the ARCADE-PATCH block injected
 into `emu/index.html`, source in
