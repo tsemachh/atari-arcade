@@ -17,8 +17,7 @@ const STATIC_CACHE = "arcade-static-v1";
 const SHELL = ["index.html", "manifest.webmanifest", "games.json"];
 function isStatic(url) {
   return url.pathname.indexOf("/emu/") > -1 ||
-         url.pathname.indexOf("/posters/") > -1 ||
-         url.pathname.indexOf("three.min.js") > -1;
+         url.pathname.indexOf("/posters/") > -1;
 }
 
 self.addEventListener("install", function (event) {
