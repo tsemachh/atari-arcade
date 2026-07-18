@@ -27,6 +27,19 @@
       "category": "maze"
     },
     {
+      "name": "Asteroids",
+      "file": "Asteroids.xex",
+      "joystick": "dpad4",
+      "category": "shooter",
+      "description": "Atari, 1981"
+    },
+    {
+      "name": "Battlezone",
+      "file": "Battlezone.xex",
+      "joystick": "dpad4",
+      "category": "shooter"
+    },
+    {
       "name": "Blue Max",
       "file": "BlueMax.xex",
       "joystick": "analog",
@@ -41,6 +54,12 @@
       "category": "maze"
     },
     {
+      "name": "Breakout",
+      "file": "Breakout.xex",
+      "joystick": "dpad4",
+      "category": "maze"
+    },
+    {
       "name": "Bristles",
       "file": "Bristles.xex",
       "joystick": "dpad4",
@@ -52,6 +71,13 @@
       "file": "BruceLee.xex",
       "joystick": "dpad8",
       "category": "action"
+    },
+    {
+      "name": "Centipede",
+      "file": "Centipede.xex",
+      "joystick": "analog",
+      "category": "shooter",
+      "description": "Atari, 1982"
     },
     {
       "name": "Choplifter",
@@ -82,6 +108,13 @@
       "file": "DesmondsDungeon.atr",
       "joystick": "dpad8",
       "category": "platformer"
+    },
+    {
+      "name": "Dig Dug",
+      "file": "DigDug.xex",
+      "joystick": "dpad4",
+      "category": "maze",
+      "description": "Atari, 1983"
     },
     {
       "name": "Donkey Kong",
@@ -136,6 +169,13 @@
       "joystick": "dpad4",
       "description": "",
       "category": "shooter"
+    },
+    {
+      "name": "Gauntlet",
+      "file": "Gauntlet.xex",
+      "joystick": "dpad8",
+      "category": "action",
+      "description": "US Gold, 1986"
     },
     {
       "name": "Ghostbusters",
@@ -366,6 +406,13 @@
       "category": "maze"
     },
     {
+      "name": "Star Raiders",
+      "file": "StarRaiders.xex",
+      "joystick": "analog",
+      "category": "shooter",
+      "description": "Atari, 1980"
+    },
+    {
       "name": "Super Cobra",
       "file": "SuperCobra.atr",
       "joystick": "analog",
@@ -388,6 +435,13 @@
       "file": "Tapper.xex",
       "joystick": "dpad4",
       "category": "action"
+    },
+    {
+      "name": "Tempest",
+      "file": "Tempest.xex",
+      "joystick": "dpad4",
+      "category": "shooter",
+      "description": "Xtreem demo"
     },
     {
       "name": "Up Up N Away",
