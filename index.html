@@ -59,6 +59,54 @@
         outline: none;
       }
       .search:focus { border-color: var(--accent); }
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px 14px 0;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+      .chip {
+        border: 1px solid var(--border);
+        background: var(--panel2);
+        color: var(--muted);
+        border-radius: 999px;
+        padding: 6px 14px;
+        font-size: 13px;
+        cursor: pointer;
+      }
+      .chip.active {
+        border-color: var(--accent);
+        color: var(--accent);
+        background: rgba(16, 38, 61, 0.6);
+      }
+      .recent-wrap {
+        max-width: 1100px;
+        margin: 10px auto 0;
+        padding: 0 14px;
+      }
+      .recent-wrap[hidden] { display: none; }
+      .recent-title {
+        color: var(--muted);
+        font-size: 12px;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        margin: 0 2px 6px;
+      }
+      .recent-row {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding-bottom: 4px;
+      }
+      .recent-row .card {
+        min-width: 130px;
+        min-height: 0;
+        padding: 10px 12px;
+      }
+      .reqlink { color: var(--accent); text-decoration: none; }
       .grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -120,6 +168,11 @@
       <button type="button" id="installBtn" hidden>&#x2B07; Install as app</button>
     </header>
     <input type="search" id="search" class="search" placeholder="Search games…" autocomplete="off" />
+    <div id="chips" class="chips"></div>
+    <div id="recentWrap" class="recent-wrap" hidden>
+      <div class="recent-title">Recently played</div>
+      <div id="recentRow" class="recent-row"></div>
+    </div>
     <div id="grid" class="grid"></div>
     <div id="status" class="status">Loading game list…</div>
     <div class="footer">
@@ -136,7 +189,92 @@
         var grid = document.getElementById("grid");
         var statusEl = document.getElementById("status");
         var searchEl = document.getElementById("search");
+        var chipsEl = document.getElementById("chips");
+        var recentWrap = document.getElementById("recentWrap");
+        var recentRow = document.getElementById("recentRow");
         var allGames = [];
+        var currentCat = "all";
+        var CATS = [
+          ["all", "All"],
+          ["shooter", "Shooters"],
+          ["platformer", "Platformers"],
+          ["maze", "Maze & Puzzle"],
+          ["racing", "Racing"],
+          ["action", "Action"],
+          ["sports", "Sports"]
+        ];
+
+        // --- Recently played (localStorage, newest first, max 8) ---
+        var RECENT_KEY = "arcade-recent";
+        function getRecent() {
+          try { return JSON.parse(localStorage.getItem(RECENT_KEY)) || []; }
+          catch (e) { return []; }
+        }
+        function recordPlay(file) {
+          try {
+            var r = getRecent().filter(function (f) { return f !== file; });
+            r.unshift(file);
+            localStorage.setItem(RECENT_KEY, JSON.stringify(r.slice(0, 8)));
+          } catch (e) { /* private mode etc. */ }
+        }
+        function makeCard(g, mini) {
+          var a = document.createElement("a");
+          a.className = "card";
+          a.href = launchUrl(g);
+          a.dataset.file = g.file;
+          var name = document.createElement("span");
+          name.className = "name";
+          name.textContent = g.name;
+          a.appendChild(name);
+          if (!mini && g.description) {
+            var d = document.createElement("span");
+            d.className = "desc";
+            d.textContent = g.description;
+            a.appendChild(d);
+          }
+          return a;
+        }
+        function renderRecent() {
+          var byFile = {};
+          allGames.forEach(function (g) { byFile[g.file] = g; });
+          var games = getRecent().map(function (f) { return byFile[f]; }).filter(Boolean);
+          recentWrap.hidden = games.length === 0 || currentCat !== "all";
+          recentRow.textContent = "";
+          games.slice(0, 6).forEach(function (g) { recentRow.appendChild(makeCard(g, true)); });
+        }
+        function renderChips() {
+          chipsEl.textContent = "";
+          CATS.forEach(function (c) {
+            var b = document.createElement("button");
+            b.type = "button";
+            b.className = "chip" + (currentCat === c[0] ? " active" : "");
+            b.textContent = c[1];
+            b.addEventListener("click", function () {
+              currentCat = c[0];
+              renderChips();
+              renderRecent();
+              render(searchEl.value);
+            });
+            chipsEl.appendChild(b);
+          });
+        }
+
+        // --- "Can't find a game" → log the miss + offer a request link ---
+        var missTimer = null;
+        function reportMiss(term) {
+          if (missTimer) clearTimeout(missTimer);
+          missTimer = setTimeout(function () {
+            try {
+              if (window.goatcounter && window.goatcounter.count) {
+                window.goatcounter.count({
+                  path: "/request/" + term.toLowerCase(),
+                  title: "game request",
+                  event: true
+                });
+              }
+            } catch (e) { /* ignore */ }
+          }, 1200);
+        }
 
         // Launch options: fast disk loading, stock 800XL (best compatibility
         // for 80s titles), back-button returns to this picker.
@@ -169,23 +307,21 @@
           var shown = 0;
           allGames.forEach(function (g) {
             if (norm && g.name.toLowerCase().indexOf(norm) === -1) return;
-            var a = document.createElement("a");
-            a.className = "card";
-            a.href = launchUrl(g);
-            var name = document.createElement("span");
-            name.className = "name";
-            name.textContent = g.name;
-            a.appendChild(name);
-            if (g.description) {
-              var d = document.createElement("span");
-              d.className = "desc";
-              d.textContent = g.description;
-              a.appendChild(d);
-            }
-            grid.appendChild(a);
+            if (currentCat !== "all" && g.category !== currentCat) return;
+            grid.appendChild(makeCard(g, false));
             shown++;
           });
-          statusEl.textContent = shown ? "" : "No games match.";
+          if (shown) {
+            statusEl.textContent = "";
+          } else {
+            statusEl.innerHTML =
+              'No games match. <a class="reqlink" target="_blank" rel="noopener" ' +
+              'href="https://github.com/tsemachh/atari-arcade/issues/new?title=' +
+              encodeURIComponent("Game request: " + (filter || "").trim()) +
+              '&body=' + encodeURIComponent("Please add this game to the arcade: " + (filter || "").trim()) +
+              '">Request this game &rarr;</a>';
+            if (norm.length >= 2) reportMiss(norm);
+          }
         }
 
         fetch("games.json", { cache: "no-cache" })
@@ -193,6 +329,8 @@
           .then(function (data) {
             allGames = (data && data.games) || [];
             statusEl.textContent = "";
+            renderChips();
+            renderRecent();
             render("");
           })
           .catch(function () {
@@ -207,6 +345,11 @@
         // (a user gesture), then navigate — Chrome keeps fullscreen across
         // same-origin navigation, so the emulator starts already fullscreen.
         // iPhones lack the fullscreen API; there the PWA install covers it.
+        document.addEventListener("click", function (e) {
+          var a = e.target && e.target.closest && e.target.closest("a.card");
+          if (a && a.dataset.file) recordPlay(a.dataset.file);
+        }, true);
+
         grid.addEventListener("click", function (e) {
           if ((navigator.maxTouchPoints || 0) === 0) return; // desktop: normal
           var a = e.target && e.target.closest && e.target.closest("a.card");

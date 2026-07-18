@@ -4,350 +4,415 @@
       "name": "River Raid",
       "file": "RiverRaid.xex",
       "joystick": "analog",
-      "description": "Activision, 1983 (title version)"
+      "description": "Activision, 1983 (title version)",
+      "category": "shooter"
     },
     {
       "name": "Action Biker",
       "file": "ActionBiker.xex",
-      "joystick": "analog"
+      "joystick": "analog",
+      "category": "racing"
     },
     {
       "name": "Alley Cat",
       "file": "AlleyCat.xex",
-      "joystick": "analog"
+      "joystick": "analog",
+      "category": "platformer"
     },
     {
       "name": "Arkanoid",
       "file": "Arkanoid.xex",
       "joystick": "dpad4",
-      "description": ""
+      "description": "",
+      "category": "maze"
     },
     {
       "name": "Blue Max",
       "file": "BlueMax.xex",
       "joystick": "analog",
-      "description": ""
+      "description": "",
+      "category": "shooter"
     },
     {
       "name": "Boulder Dash",
       "file": "BoulderDash.xex",
       "joystick": "dpad4",
-      "description": "First Star Software, 1984"
+      "description": "First Star Software, 1984",
+      "category": "maze"
     },
     {
       "name": "Bristles",
       "file": "Bristles.xex",
       "joystick": "dpad4",
-      "description": ""
+      "description": "",
+      "category": "platformer"
     },
     {
       "name": "Bruce Lee",
       "file": "BruceLee.xex",
-      "joystick": "dpad8"
+      "joystick": "dpad8",
+      "category": "action"
     },
     {
       "name": "Choplifter",
       "file": "Choplifter.xex",
-      "joystick": "analog"
+      "joystick": "analog",
+      "category": "shooter"
     },
     {
       "name": "Colony",
       "file": "Colony.xex",
-      "joystick": "analog"
+      "joystick": "analog",
+      "category": "shooter"
     },
     {
       "name": "Cosmic Tunnels",
       "file": "CosmicTunnels.xex",
-      "joystick": "analog"
+      "joystick": "analog",
+      "category": "shooter"
     },
     {
       "name": "Defender",
       "file": "Defender.xex",
-      "joystick": "analog"
+      "joystick": "analog",
+      "category": "shooter"
     },
     {
       "name": "Desmonds Dungeon",
       "file": "DesmondsDungeon.atr",
-      "joystick": "dpad8"
+      "joystick": "dpad8",
+      "category": "platformer"
     },
     {
       "name": "Donkey Kong",
       "file": "DonkeyKong.xex",
       "joystick": "dpad4",
-      "description": ""
+      "description": "",
+      "category": "platformer"
     },
     {
       "name": "Donkey Kong Jr",
       "file": "DonkeyKongJr.xex",
       "joystick": "dpad4",
-      "description": ""
+      "description": "",
+      "category": "platformer"
     },
     {
       "name": "Dropzone",
       "file": "Dropzone.xex",
       "joystick": "analog",
-      "description": ""
+      "description": "",
+      "category": "shooter"
     },
     {
       "name": "Flip and Flop",
       "file": "FlipAndFlop.xex",
       "joystick": "dpad4",
-      "description": ""
+      "description": "",
+      "category": "platformer"
     },
     {
       "name": "Fort Apocalypse",
       "file": "FortApocalypse.xex",
-      "joystick": "analog"
+      "joystick": "analog",
+      "category": "shooter"
     },
     {
       "name": "Frogger",
       "file": "Frogger.xex",
-      "joystick": "dpad4"
+      "joystick": "dpad4",
+      "category": "maze"
     },
     {
       "name": "Frogger II",
       "file": "FroggerIi.xex",
       "joystick": "dpad4",
-      "description": ""
+      "description": "",
+      "category": "maze"
     },
     {
       "name": "Galaxian",
       "file": "Galaxian.xex",
       "joystick": "dpad4",
-      "description": ""
+      "description": "",
+      "category": "shooter"
     },
     {
       "name": "Ghostbusters",
       "file": "Ghostbusters.xex",
       "joystick": "dpad4",
-      "description": "Activision, 1985"
+      "description": "Activision, 1985",
+      "category": "action"
     },
     {
       "name": "Gyruss",
       "file": "Gyruss.xex",
-      "joystick": "analog"
+      "joystick": "analog",
+      "category": "shooter"
     },
     {
       "name": "Hard Hat Willy",
       "file": "HardHatWilly.xex",
-      "joystick": "dpad8"
+      "joystick": "dpad8",
+      "category": "platformer"
     },
     {
       "name": "Hyperblast",
       "file": "Hyperblast.xex",
-      "joystick": "dpad4"
+      "joystick": "dpad4",
+      "category": "shooter"
     },
     {
       "name": "Ion Roadway",
       "file": "IonRoadway.atr",
-      "joystick": "analog"
+      "joystick": "analog",
+      "category": "maze"
     },
     {
       "name": "James Bond",
       "file": "JamesBond.xex",
-      "joystick": "analog"
+      "joystick": "analog",
+      "category": "action"
     },
     {
       "name": "Jet Boot Jack",
       "file": "JetBootJack.xex",
-      "joystick": "dpad8"
+      "joystick": "dpad8",
+      "category": "platformer"
     },
     {
       "name": "Jungle Hunt",
       "file": "JungleHunt.xex",
-      "joystick": "analog"
+      "joystick": "analog",
+      "category": "platformer"
     },
     {
       "name": "Karateka",
       "file": "Karateka.atr",
-      "joystick": "dpad8"
+      "joystick": "dpad8",
+      "category": "action"
     },
     {
       "name": "Keystone Kapers",
       "file": "KeystoneKapers.xex",
-      "joystick": "dpad4"
+      "joystick": "dpad4",
+      "category": "platformer"
     },
     {
       "name": "Krazy Shootout",
       "file": "KrazyShootout.atr",
-      "joystick": "analog"
+      "joystick": "analog",
+      "category": "shooter"
     },
     {
       "name": "Mario Bros",
       "file": "MarioBros.xex",
       "joystick": "dpad4",
-      "description": "Nintendo/Atari, 1983"
+      "description": "Nintendo/Atari, 1983",
+      "category": "platformer"
     },
     {
       "name": "Megamania",
       "file": "Megamania.xex",
-      "joystick": "dpad4"
+      "joystick": "dpad4",
+      "category": "shooter"
     },
     {
       "name": "Montezuma's Revenge",
       "file": "MontezumasRevenge.xex",
-      "joystick": "dpad8"
+      "joystick": "dpad8",
+      "category": "platformer"
     },
     {
       "name": "Moon Patrol",
       "file": "MoonPatrol.xex",
       "joystick": "dpad4",
-      "description": ""
+      "description": "",
+      "category": "shooter"
     },
     {
       "name": "Mr Do",
       "file": "MrDoCrk.xex",
-      "joystick": "dpad4"
+      "joystick": "dpad4",
+      "category": "maze"
     },
     {
       "name": "Mr Robot & His Robot Factory",
       "file": "MrRobotHisRobotFactoryCht.xex",
-      "joystick": "dpad8"
+      "joystick": "dpad8",
+      "category": "platformer"
     },
     {
       "name": "Ms Pacman",
       "file": "MsPacman.xex",
-      "joystick": "dpad4"
+      "joystick": "dpad4",
+      "category": "maze"
     },
     {
       "name": "Nadral",
       "file": "Nadral.xex",
-      "joystick": "dpad8"
+      "joystick": "dpad8",
+      "category": "shooter"
     },
     {
       "name": "Ninja",
       "file": "Ninja.xex",
       "joystick": "dpad8",
-      "description": ""
+      "description": "",
+      "category": "action"
     },
     {
       "name": "Oils Well",
       "file": "OilsWell.xex",
-      "joystick": "dpad4"
+      "joystick": "dpad4",
+      "category": "maze"
     },
     {
       "name": "One On One",
       "file": "OneOnOne.xex",
-      "joystick": "analog"
+      "joystick": "analog",
+      "category": "sports"
     },
     {
       "name": "Pengo",
       "file": "Pengo.xex",
-      "joystick": "dpad4"
+      "joystick": "dpad4",
+      "category": "maze"
     },
     {
       "name": "Pharaoh's Curse",
       "file": "PharaohSCurse.xex",
-      "joystick": "dpad8"
+      "joystick": "dpad8",
+      "category": "platformer"
     },
     {
       "name": "Pitfall",
       "file": "PitfallI.xex",
-      "joystick": "dpad8"
+      "joystick": "dpad8",
+      "category": "platformer"
     },
     {
       "name": "Pitfall II",
       "file": "PitfallIi.xex",
-      "joystick": "dpad8"
+      "joystick": "dpad8",
+      "category": "platformer"
     },
     {
       "name": "Pitstop",
       "file": "Pitstop.xex",
       "joystick": "analog",
       "description": "Epyx, 1983",
-      "tilt": true
+      "tilt": true,
+      "category": "racing"
     },
     {
       "name": "Pitstop II",
       "file": "PitstopIi.xex",
       "joystick": "analog",
-      "tilt": true
+      "tilt": true,
+      "category": "racing"
     },
     {
       "name": "Pole Position",
       "file": "PolePosition.xex",
       "joystick": "analog",
       "description": "",
-      "tilt": true
+      "tilt": true,
+      "category": "racing"
     },
     {
       "name": "Pong",
       "file": "Pong.xex",
-      "joystick": "dpad4"
+      "joystick": "dpad4",
+      "category": "sports"
     },
     {
       "name": "Pooyan",
       "file": "Pooyan.xex",
       "joystick": "dpad4",
-      "description": ""
+      "description": "",
+      "category": "shooter"
     },
     {
       "name": "Qix",
       "file": "Qix.xex",
       "joystick": "dpad4",
-      "description": ""
+      "description": "",
+      "category": "maze"
     },
     {
       "name": "Soccer",
       "file": "Soccer.xex",
       "joystick": "analog",
-      "description": "Thorn EMI Video"
+      "description": "Thorn EMI Video",
+      "category": "sports"
     },
     {
       "name": "Space Invaders",
       "file": "SpaceInvaders.atr",
-      "joystick": "dpad4"
+      "joystick": "dpad4",
+      "category": "shooter"
     },
     {
       "name": "Spy Vs Spy 1",
       "file": "SpyVsSpy1.atr",
-      "joystick": "dpad8"
+      "joystick": "dpad8",
+      "category": "action"
     },
     {
       "name": "Spy's Demise",
       "file": "SpySDemise.atr",
-      "joystick": "dpad4"
+      "joystick": "dpad4",
+      "category": "maze"
     },
     {
       "name": "Super Cobra",
       "file": "SuperCobra.atr",
-      "joystick": "analog"
+      "joystick": "analog",
+      "category": "shooter"
     },
     {
       "name": "Super Zaxxon",
       "file": "SuperZaxxon.atr",
-      "joystick": "analog"
+      "joystick": "analog",
+      "category": "shooter"
     },
     {
       "name": "Swat",
       "file": "Swat.atr",
-      "joystick": "dpad8"
+      "joystick": "dpad8",
+      "category": "shooter"
     },
     {
       "name": "Tapper",
       "file": "Tapper.xex",
-      "joystick": "dpad4"
+      "joystick": "dpad4",
+      "category": "action"
     },
     {
       "name": "Up Up N Away",
       "file": "UpUpNAwayPulsar.atr",
-      "joystick": "dpad4"
+      "joystick": "dpad4",
+      "category": "platformer"
     },
     {
       "name": "Vanguard",
       "file": "Vanguard.xex",
-      "joystick": "analog"
+      "joystick": "analog",
+      "category": "shooter"
     },
     {
       "name": "Zaxxon",
       "file": "Zaxxon.xex",
       "joystick": "analog",
-      "description": ""
+      "description": "",
+      "category": "shooter"
     },
     {
       "name": "Zorro",
       "file": "ZorroCht.xex",
-      "joystick": "dpad8"
+      "joystick": "dpad8",
+      "category": "action"
     }
   ]
 }
