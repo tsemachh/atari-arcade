@@ -192,7 +192,7 @@
         }
 
         // ---- motion: calm auto-flow, drag scrub, wheel, inertia ---------
-        var auto = 55;                 // px/s
+        var auto = 110;                // px/s
         var vel = 0, dragging = false, lastX = 0, moved = 0, downAt = 0, idleAt = 0;
         function onDown(e) { dragging = true; stage.classList.add("dragging"); moved = 0; lastX = e.clientX; vel = 0; downAt = Date.now(); }
         function onMove(e) {
