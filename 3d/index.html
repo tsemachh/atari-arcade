@@ -7,27 +7,38 @@
     <meta name="theme-color" content="#0d1117" />
     <link rel="icon" href="../icons/icon-192.png" />
     <style>
-      :root { --accent: #5cc8ff; --muted: #9db0d3; }
+      :root { --accent: #5cc8ff; --muted: #9db0d3; --border: rgba(255,255,255,.18); }
       * { box-sizing: border-box; }
       html, body { margin: 0; height: 100%; background: #05070c; overflow: hidden;
         font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
       #gl { position: fixed; inset: 0; display: block; touch-action: none; }
-      .ui { position: fixed; left: 0; right: 0; text-align: center; color: #e6eefc;
-            pointer-events: none; z-index: 2; }
-      .ui.top { top: calc(env(safe-area-inset-top, 0px) + 14px); }
-      .ui.top h1 { margin: 0; font-size: 22px; letter-spacing: .1em; font-weight: 800;
+      .ui { position: fixed; left: 0; right: 0; text-align: center; color: #e6eefc; z-index: 2; }
+      .ui.top { top: calc(env(safe-area-inset-top, 0px) + 10px); pointer-events: none; }
+      .ui.top h1 { margin: 0; font-size: 19px; letter-spacing: .1em; font-weight: 800;
                    text-shadow: 0 0 18px rgba(92,200,255,.6); }
       .ui.top h1 span { color: var(--accent); }
-      .ui.top .hint { color: var(--muted); font-size: 12px; margin-top: 4px; }
-      .ui.bottom { bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); }
-      .ui.bottom a { pointer-events: auto; color: var(--accent); text-decoration: none;
-                     font-size: 13px; border: 1px solid rgba(92,200,255,.4);
-                     border-radius: 999px; padding: 7px 16px; background: rgba(13,17,23,.6); }
+      .bar { margin: 8px auto 0; display: flex; flex-wrap: wrap; justify-content: center;
+             gap: 6px; max-width: 96vw; pointer-events: auto; }
+      .bar input {
+        width: min(240px, 44vw);
+        padding: 7px 12px; font-size: 13px;
+        border-radius: 999px; border: 1px solid var(--border);
+        background: rgba(19,26,38,.8); color: #e6eefc; outline: none;
+      }
+      .bar input:focus { border-color: var(--accent); }
+      .chip { border: 1px solid var(--border); background: rgba(19,26,38,.8);
+              color: var(--muted); border-radius: 999px; padding: 6px 12px;
+              font-size: 12px; cursor: pointer; }
+      .chip.active { border-color: var(--accent); color: var(--accent); }
       #tip { position: fixed; left: 50%; transform: translateX(-50%);
              bottom: calc(env(safe-area-inset-bottom, 0px) + 54px);
              color: #e6eefc; font-size: 14px; font-weight: 700; z-index: 2;
              text-shadow: 0 0 10px rgba(92,200,255,.8); pointer-events: none;
              opacity: 0; transition: opacity .15s; }
+      .ui.bottom { bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); pointer-events: none; }
+      .ui.bottom a { pointer-events: auto; color: var(--accent); text-decoration: none;
+                     font-size: 13px; border: 1px solid rgba(92,200,255,.4);
+                     border-radius: 999px; padding: 7px 16px; background: rgba(13,17,23,.6); }
       #loading { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
                  color: var(--muted); font-size: 14px; z-index: 3; background: #05070c;
                  transition: opacity .4s; }
@@ -37,7 +48,9 @@
     <canvas id="gl"></canvas>
     <div class="ui top">
       <h1>ATARI <span>ARCADE</span> · 3D</h1>
-      <div class="hint">drag to spin · tap a poster to play</div>
+      <div class="bar" id="bar">
+        <input type="search" id="q" placeholder="Search…" autocomplete="off" />
+      </div>
     </div>
     <div id="tip"></div>
     <div class="ui bottom"><a href="../">&larr; classic view</a></div>
@@ -50,15 +63,16 @@
         var canvas = document.getElementById("gl");
         var tip = document.getElementById("tip");
         var loading = document.getElementById("loading");
+        var bar = document.getElementById("bar");
+        var qEl = document.getElementById("q");
         var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, preserveDrawingBuffer: true });
         renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
         var scene = new THREE.Scene();
-        scene.fog = new THREE.Fog(0x05070c, 14, 30);
+        scene.fog = new THREE.Fog(0x05070c, 16, 34);
         var camera = new THREE.PerspectiveCamera(70, 1, 0.1, 100);
         camera.position.set(0, 0, 0.001);
 
-        // starfield
-        (function () {
+        (function stars() {
           var g = new THREE.BufferGeometry();
           var n = 900, pos = new Float32Array(n * 3);
           for (var i = 0; i < n; i++) {
@@ -74,13 +88,16 @@
         })();
 
         scene.add(new THREE.AmbientLight(0xffffff, 1.0));
-
         var group = new THREE.Group();
         scene.add(group);
 
-        var CARD_W = 3.36, CARD_H = 2.86, LABEL_H = 0.46;
+        var CARD_W = 3.36, CARD_H = 2.86;
         var tvMode = false;
         try { tvMode = new URLSearchParams(location.search).get("tv") === "1"; } catch (e) {}
+
+        var CATS = [["all","All"],["shooter","Shooters"],["platformer","Platformers"],
+                    ["maze","Maze"],["racing","Racing"],["action","Action"],["sports","Sports"]];
+        var allGames = [], currentCat = "all", query = "";
 
         function launchUrl(g) {
           var url = "../emu/?lib=" + encodeURIComponent(g.file) +
@@ -92,64 +109,98 @@
           return url;
         }
 
-        // poster + name strip baked into one canvas texture
-        function cardTexture(img, name, done) {
-          var c = document.createElement("canvas");
-          c.width = 336; c.height = 286;
-          var x = c.getContext("2d");
-          x.fillStyle = "#000"; x.fillRect(0, 0, 336, 286);
-          if (img) x.drawImage(img, 0, 0, 336, 240);
-          x.fillStyle = "#131a26"; x.fillRect(0, 240, 336, 46);
-          x.strokeStyle = "rgba(92,200,255,.35)"; x.strokeRect(0.5, 0.5, 335, 285);
-          x.fillStyle = "#e6eefc";
-          x.font = "700 22px system-ui, sans-serif";
-          x.textAlign = "center"; x.textBaseline = "middle";
-          var label = name.length > 26 ? name.slice(0, 25) + "…" : name;
-          x.fillText(label, 168, 264);
-          var t = new THREE.CanvasTexture(c);
-          t.anisotropy = renderer.capabilities.getMaxAnisotropy();
-          done(t);
+        // one baked texture (poster + name strip) per game, cached
+        var texCache = {};
+        function getTexture(g, apply) {
+          if (texCache[g.file]) { apply(texCache[g.file]); return; }
+          function bake(img) {
+            var c = document.createElement("canvas");
+            c.width = 336; c.height = 286;
+            var x = c.getContext("2d");
+            x.fillStyle = "#000"; x.fillRect(0, 0, 336, 286);
+            if (img) x.drawImage(img, 0, 0, 336, 240);
+            x.fillStyle = "#131a26"; x.fillRect(0, 240, 336, 46);
+            x.strokeStyle = "rgba(92,200,255,.35)"; x.strokeRect(0.5, 0.5, 335, 285);
+            x.fillStyle = "#e6eefc";
+            x.font = "700 22px system-ui, sans-serif";
+            x.textAlign = "center"; x.textBaseline = "middle";
+            var label = g.name.length > 26 ? g.name.slice(0, 25) + "…" : g.name;
+            x.fillText(label, 168, 264);
+            var t = new THREE.CanvasTexture(c);
+            t.anisotropy = renderer.capabilities.getMaxAnisotropy();
+            texCache[g.file] = t;
+            apply(t);
+          }
+          var img = new Image();
+          img.onload = function () { bake(img); };
+          img.onerror = function () { bake(null); };
+          img.src = "../posters/" + g.file.replace(/\.[^.]+$/, "") + ".png";
         }
 
         var pickables = [];
-        function build(games) {
-          var perRow = Math.ceil(games.length / 3);
-          var R = Math.max(8, perRow * (CARD_W + 0.55) / (2 * Math.PI));
-          var rows = [CARD_H + 0.5, 0, -(CARD_H + 0.5)];
+        function rebuild() {
+          while (group.children.length) {
+            var m = group.children[0];
+            group.remove(m);
+            m.geometry.dispose();
+            m.material.dispose();   // textures stay cached
+          }
+          pickables = [];
+          var q = query.trim().toLowerCase();
+          var games = allGames.filter(function (g) {
+            if (currentCat !== "all" && g.category !== currentCat) return false;
+            if (q && g.name.toLowerCase().indexOf(q) === -1) return false;
+            return true;
+          });
+          if (!games.length) return;
+          // fewer rows when the set is small; every row within pitch reach
+          var rowsN = games.length > 40 ? 3 : (games.length > 14 ? 2 : 1);
+          var perRow = Math.ceil(games.length / rowsN);
+          var R = Math.max(6.5, perRow * (CARD_W + 0.55) / (2 * Math.PI));
+          var offsets = rowsN === 3 ? [CARD_H + 0.35, 0, -(CARD_H + 0.35)]
+                       : rowsN === 2 ? [(CARD_H + 0.35) / 2, -(CARD_H + 0.35) / 2] : [0];
           games.forEach(function (g, i) {
             var row = Math.floor(i / perRow);
             var col = i % perRow;
             var theta = (col / perRow) * Math.PI * 2 + (row * 0.5 * (Math.PI * 2 / perRow));
-            var geo = new THREE.PlaneGeometry(CARD_W, CARD_H);
             var mat = new THREE.MeshBasicMaterial({ color: 0x0d1117, side: THREE.DoubleSide });
-            var mesh = new THREE.Mesh(geo, mat);
-            mesh.position.set(R * Math.sin(theta), rows[row] || 0, -R * Math.cos(theta));
-            mesh.lookAt(0, mesh.position.y, 0);   // face the camera at the centre
-            mesh.userData = { game: g };
+            var mesh = new THREE.Mesh(new THREE.PlaneGeometry(CARD_W, CARD_H), mat);
+            mesh.position.set(R * Math.sin(theta), offsets[row] || 0, -R * Math.cos(theta));
+            mesh.lookAt(0, mesh.position.y, 0);
+            mesh.userData = { game: g, home: mesh.position.clone() };
             group.add(mesh);
             pickables.push(mesh);
-            var img = new Image();
-            img.onload = function () {
-              cardTexture(img, g.name, function (t) { mat.map = t; mat.color.set(0xffffff); mat.needsUpdate = true; });
-            };
-            img.onerror = function () {
-              cardTexture(null, g.name, function (t) { mat.map = t; mat.color.set(0xffffff); mat.needsUpdate = true; });
-            };
-            img.src = "../posters/" + g.file.replace(/\.[^.]+$/, "") + ".png";
+            getTexture(g, function (t) { mat.map = t; mat.color.set(0xffffff); mat.needsUpdate = true; });
           });
         }
 
-        // drag / inertia / idle spin
-        var rotY = 0, vel = 0, dragging = false, lastX = 0, movedPx = 0, downAt = 0;
-        function onDown(e) {
-          dragging = true; movedPx = 0; lastX = e.clientX; vel = 0; downAt = Date.now();
-        }
+        // filter UI
+        CATS.forEach(function (c) {
+          var b = document.createElement("button");
+          b.type = "button";
+          b.className = "chip" + (c[0] === "all" ? " active" : "");
+          b.textContent = c[1];
+          b.addEventListener("click", function () {
+            currentCat = c[0];
+            [].forEach.call(bar.querySelectorAll(".chip"), function (x) { x.classList.remove("active"); });
+            b.classList.add("active");
+            rebuild();
+          });
+          bar.appendChild(b);
+        });
+        qEl.addEventListener("input", function () { query = qEl.value; rebuild(); });
+
+        // drag: horizontal spins the wall, vertical tilts the view
+        var rotY = 0, vel = 0, pitch = 0, dragging = false, lastX = 0, lastY = 0, movedPx = 0, downAt = 0;
+        function onDown(e) { dragging = true; movedPx = 0; lastX = e.clientX; lastY = e.clientY; vel = 0; downAt = Date.now(); }
         function onMove(e) {
           if (!dragging) { hover(e); return; }
-          var dx = e.clientX - lastX; lastX = e.clientX;
-          movedPx += Math.abs(dx);
+          var dx = e.clientX - lastX, dy = e.clientY - lastY;
+          lastX = e.clientX; lastY = e.clientY;
+          movedPx += Math.abs(dx) + Math.abs(dy);
           var d = dx * 0.0035;
           rotY += d; vel = d;
+          pitch = Math.max(-0.75, Math.min(0.75, pitch + dy * 0.0028));
         }
         function onUp(e) {
           if (!dragging) return;
@@ -169,24 +220,43 @@
           return hit ? hit.object : null;
         }
         var hovered = null;
+        function setHover(m, on) {
+          // pull the card toward the camera as well as scaling it — the
+          // enlarged card must WIN the depth test over its neighbours,
+          // otherwise render and raycast can disagree at card borders
+          // (z-fighting at identical radius picked one card visually and
+          // another for the click).
+          m.scale.set(on ? 1.06 : 1, on ? 1.06 : 1, 1);
+          m.position.copy(m.userData.home);
+          if (on) {
+            var toCam = m.position.clone().multiplyScalar(-0.045);
+            toCam.y = 0;
+            m.position.add(toCam);
+          }
+        }
         function hover(e) {
           var m = cast(e);
           if (m !== hovered) {
-            if (hovered) hovered.scale.set(1, 1, 1);
+            if (hovered) setHover(hovered, false);
             hovered = m;
-            if (m) { m.scale.set(1.07, 1.07, 1); tip.textContent = m.userData.game.name; tip.style.opacity = 1; canvas.style.cursor = "pointer"; }
-            else { tip.style.opacity = 0; canvas.style.cursor = "grab"; }
+            if (m) { setHover(m, true); tip.textContent = m.userData.game.name; tip.style.opacity = 1; canvas.style.cursor = "pointer"; }
+            else { tip.textContent = ""; tip.style.opacity = 0; canvas.style.cursor = "grab"; }
           }
         }
         function pick(e) {
           var m = cast(e);
-          if (m) location.href = launchUrl(m.userData.game);
+          if (!m) return;
+          // show what was picked for a beat before navigating
+          setHover(m, true);
+          tip.textContent = "\u25B6 " + m.userData.game.name;
+          tip.style.opacity = 1;
+          var url = launchUrl(m.userData.game);
+          setTimeout(function () { location.href = url; }, 230);
         }
 
         function resize() {
-          var w = window.innerWidth, h = window.innerHeight;
-          renderer.setSize(w, h, false);
-          camera.aspect = w / h;
+          renderer.setSize(window.innerWidth, window.innerHeight, false);
+          camera.aspect = window.innerWidth / window.innerHeight;
           camera.updateProjectionMatrix();
         }
         window.addEventListener("resize", resize);
@@ -197,18 +267,19 @@
           requestAnimationFrame(tick);
           var dt = clock.getDelta();
           if (!dragging) {
-            rotY += vel;
-            vel *= 0.95;
-            if (Math.abs(vel) < 0.0004) rotY += dt * 0.03; // idle drift
+            rotY += vel; vel *= 0.95;
+            if (Math.abs(vel) < 0.0004) rotY += dt * 0.03;
           }
           group.rotation.y = rotY;
+          camera.rotation.x = pitch;
           renderer.render(scene, camera);
         }
 
         fetch("../games.json", { cache: "no-cache" })
           .then(function (r) { return r.json(); })
           .then(function (d) {
-            build((d && d.games) || []);
+            allGames = (d && d.games) || [];
+            rebuild();
             tick();
             loading.style.opacity = 0;
             setTimeout(function () { loading.remove(); }, 500);
