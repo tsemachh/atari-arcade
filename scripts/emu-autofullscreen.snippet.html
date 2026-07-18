@@ -281,20 +281,31 @@
       try { if (window.Module && Module._ATWasmSetJoystick) Module._ATWasmSetJoystick(ext.mask, ext.fire ? 1 : 0); } catch (e) {}
     }
 
-    // ---- auto-fire toggle (~11 Hz pulse on the external trigger) -------
+    // ---- auto-fire toggle ----------------------------------------------
+    // Prefers the emulator's native auto-fire (ATWasmSetAutoFire, added
+    // upstream after our #85: holding the fire button pulses in-core).
+    // Falls back to an ~11 Hz JS pulse on the external trigger when the
+    // bundle predates the export.
     var afBtn = document.getElementById('arcade-af');
     var afTimer = null;
+    function afNative() {
+      try { return !!(window.Module && Module._ATWasmSetAutoFire); } catch (e) { return false; }
+    }
     if (afBtn) afBtn.addEventListener('click', function (e) {
       e.preventDefault(); e.stopPropagation();
-      if (afTimer) {
-        clearInterval(afTimer); afTimer = null;
-        afBtn.classList.remove('on');
-        ext.fire = false; pushExt();
-      } else {
-        afBtn.classList.add('on');
+      var on = !afBtn.classList.contains('on');
+      afBtn.classList.toggle('on', on);
+      if (afNative()) {
+        try { Module._ATWasmSetAutoFire(on ? 1 : 0); } catch (err) {}
+        if (afTimer) { clearInterval(afTimer); afTimer = null; }
+        if (!on && ext.fire) { ext.fire = false; pushExt(); }
+      } else if (on) {
         afTimer = setInterval(function () {
           ext.fire = !ext.fire; pushExt();
         }, 45);
+      } else {
+        if (afTimer) { clearInterval(afTimer); afTimer = null; }
+        ext.fire = false; pushExt();
       }
     });
 

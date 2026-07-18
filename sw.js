@@ -9,7 +9,16 @@
  */
 
 const CACHE_VERSION = "arcade-v1";
+// Immutable heavy assets (emulator binaries, game files, posters) live in
+// a cache that SURVIVES deploys — their URLs are content-addressed (?v=
+// tags / new filenames), so a shell deploy must not force a 12MB wasm
+// re-download. Only the versioned shell cache is dropped on activate.
+const STATIC_CACHE = "arcade-static-v1";
 const SHELL = ["index.html", "manifest.webmanifest", "games.json"];
+function isStatic(url) {
+  return url.pathname.indexOf("/emu/") > -1 ||
+         url.pathname.indexOf("/posters/") > -1;
+}
 
 self.addEventListener("install", function (event) {
   event.waitUntil(
@@ -30,11 +39,15 @@ self.addEventListener("install", function (event) {
                 var files = ((data && data.games) || []).map(function (g) {
                   return "emu/library/" + g.file;
                 });
-                return Promise.all(
-                  files.map(function (u) {
-                    return cache.add(u).catch(function () { /* best effort */ });
-                  }),
-                );
+                return caches.open(STATIC_CACHE).then(function (sc) {
+                  return Promise.all(
+                    files.map(function (u) {
+                      return sc.match(u).then(function (hit) {
+                        return hit ? null : sc.add(u).catch(function () {});
+                      });
+                    }),
+                  );
+                });
               })
               .catch(function () { /* library warmup is best effort */ });
           });
@@ -53,7 +66,7 @@ self.addEventListener("activate", function (event) {
         return Promise.all(
           keys
             .filter(function (k) {
-              return k !== CACHE_VERSION;
+              return k !== CACHE_VERSION && k !== STATIC_CACHE;
             })
             .map(function (k) {
               return caches.delete(k);
@@ -83,29 +96,46 @@ self.addEventListener("fetch", function (event) {
     url.pathname.endsWith("build-info.json");
 
   if (alwaysFresh) {
+    // Network-first, but never make the user wait on a slow connection:
+    // race the network against a short timeout and fall back to cache.
+    // The network response still lands in the cache in the background,
+    // so a timed-out launch is at most one deploy behind.
     event.respondWith(
-      fetch(request)
-        .then(function (response) {
-          const copy = response.clone();
-          caches.open(CACHE_VERSION).then(function (cache) {
-            cache.put(request, copy);
+      new Promise(function (resolve) {
+        let settled = false;
+        const timer = setTimeout(function () {
+          caches.match(request).then(function (cached) {
+            if (!settled && cached) { settled = true; resolve(cached); }
           });
-          return response;
-        })
-        .catch(function () {
-          return caches.match(request);
-        }),
+        }, 1500);
+        fetch(request)
+          .then(function (response) {
+            clearTimeout(timer);
+            const copy = response.clone();
+            caches.open(CACHE_VERSION).then(function (cache) {
+              cache.put(request, copy);
+            });
+            if (!settled) { settled = true; resolve(response); }
+          })
+          .catch(function () {
+            clearTimeout(timer);
+            caches.match(request).then(function (cached) {
+              if (!settled) { settled = true; resolve(cached || Response.error()); }
+            });
+          });
+      }),
     );
     return;
   }
 
+  const bucket = isStatic(url) ? STATIC_CACHE : CACHE_VERSION;
   event.respondWith(
     caches.match(request, { ignoreSearch: false }).then(function (cached) {
       if (cached) return cached;
       return fetch(request).then(function (response) {
         if (response && response.ok) {
           const copy = response.clone();
-          caches.open(CACHE_VERSION).then(function (cache) {
+          caches.open(bucket).then(function (cache) {
             cache.put(request, copy);
           });
         }
