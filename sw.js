@@ -16,7 +16,28 @@ self.addEventListener("install", function (event) {
     caches
       .open(CACHE_VERSION)
       .then(function (cache) {
-        return cache.addAll(SHELL);
+        return cache
+          .addAll(SHELL)
+          .then(function () {
+            // Pre-warm the entire game library (~1.7MB). The emulator's
+            // deep-link loader treats a failed game download as non-fatal
+            // and boots anyway — on a flaky first mobile load that means
+            // an empty Atari dropping into Self Test. With every .xex/.atr
+            // already in the SW cache, launches never race the network.
+            return fetch("games.json", { cache: "no-cache" })
+              .then(function (r) { return r.json(); })
+              .then(function (data) {
+                var files = ((data && data.games) || []).map(function (g) {
+                  return "emu/library/" + g.file;
+                });
+                return Promise.all(
+                  files.map(function (u) {
+                    return cache.add(u).catch(function () { /* best effort */ });
+                  }),
+                );
+              })
+              .catch(function () { /* library warmup is best effort */ });
+          });
       })
       .then(function () {
         return self.skipWaiting();
