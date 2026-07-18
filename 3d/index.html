@@ -159,19 +159,29 @@
             line.appendChild(el);
             cards.push({ el: el, game: g });
           });
-          offset = 0;
+          offset = window.innerWidth / 2 - cardW() / 2 + (cardW() + 18);
           layout();
         }
 
-        // endless conveyor: cards wrap around a band wider than the screen
+        // endless conveyor: cards wrap around a band wider than the screen.
+        // When everything fits on screen (short search results), skip the
+        // band entirely and just centre the cards statically.
+        function fitsOnScreen() { return N * (cardW() + 18) <= window.innerWidth; }
         function layout() {
           var w = cardW(), gap = 18, step = w + gap;
           span = Math.max(N * step, window.innerWidth + step * 2);
           var mid = window.innerWidth / 2;
+          var staticStart = mid - (N * step - gap) / 2;
+          var isStatic = fitsOnScreen();
           var active = null, activeDist = 1e9;
           cards.forEach(function (c, i) {
-            var x = ((i * step + offset) % span + span) % span;
-            var left = x - step;                    // one card of lead-in off-screen
+            var left;
+            if (isStatic) {
+              left = staticStart + i * step;
+            } else {
+              var x = ((i * step + offset) % span + span) % span;
+              left = x - step;                  // one card of lead-in off-screen
+            }
             var centreX = left + w / 2;
             var d = centreX - mid;
             var vis = left > -step * 1.5 && left < window.innerWidth + step * 0.5;
@@ -282,7 +292,7 @@
           var dt = Math.min(0.05, (now - last) / 1000); last = now;
           if (!dragging) {
             if (Math.abs(vel) > 0.4) { offset += vel; vel *= 0.94; layout(); }
-            else if (Date.now() - idleAt > 3500) { offset -= auto * dt; layout(); }
+            else if (!fitsOnScreen() && Date.now() - idleAt > 3500) { offset -= auto * dt; layout(); }
           }
         }
 
