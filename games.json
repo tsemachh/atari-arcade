@@ -34,6 +34,13 @@
       "description": "Atari, 1981"
     },
     {
+      "name": "Basketball",
+      "file": "Basketball.xex",
+      "joystick": "dpad8",
+      "category": "sports",
+      "description": "Atari, 1979"
+    },
+    {
       "name": "Battlezone",
       "file": "Battlezone.xex",
       "joystick": "dpad4",
