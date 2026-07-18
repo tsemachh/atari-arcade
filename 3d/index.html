@@ -106,7 +106,7 @@
         var qEl = document.getElementById("q");
         var loading = document.getElementById("loading");
 
-        function cardW() { return Math.min(300, Math.max(190, window.innerWidth * 0.24)); }
+        function cardW() { return Math.min(420, Math.max(230, window.innerWidth * 0.31)); }
         function applySizes() {
           var w = cardW(), h = Math.round(w * 240 / 336) + 34;
           document.documentElement.style.setProperty("--cardW", w + "px");
@@ -192,7 +192,7 @@
         }
 
         // ---- motion: calm auto-flow, drag scrub, wheel, inertia ---------
-        var auto = 22;                 // px/s
+        var auto = 55;                 // px/s
         var vel = 0, dragging = false, lastX = 0, moved = 0, downAt = 0, idleAt = 0;
         function onDown(e) { dragging = true; stage.classList.add("dragging"); moved = 0; lastX = e.clientX; vel = 0; downAt = Date.now(); }
         function onMove(e) {
