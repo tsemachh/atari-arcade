@@ -86,7 +86,7 @@
       }
       .recent-wrap {
         max-width: 1100px;
-        margin: 10px auto 0;
+        margin: 12px auto 2px;
         padding: 0 14px;
       }
       .recent-wrap[hidden] { display: none; }
@@ -196,12 +196,12 @@
       <div class="sub">Atari 800 XL &middot; powered by AltirraSDL (cycle-accurate, WebAssembly)</div>
       <button type="button" id="installBtn" hidden>&#x2B07; Install as app</button>
     </header>
-    <input type="search" id="search" class="search" placeholder="Search games…" autocomplete="off" />
-    <div id="chips" class="chips"></div>
     <div id="recentWrap" class="recent-wrap" hidden>
       <div class="recent-title">Recently played</div>
       <div id="recentRow" class="recent-row"></div>
     </div>
+    <input type="search" id="search" class="search" placeholder="Search games…" autocomplete="off" />
+    <div id="chips" class="chips"></div>
     <div id="grid" class="grid"></div>
     <div id="status" class="status">Loading game list…</div>
     <div class="footer">
