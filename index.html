@@ -209,6 +209,7 @@
       Emulation by <a href="https://github.com/ilmenit/AltirraSDL" rel="noopener">AltirraSDL</a>
       / <a href="https://www.virtualdub.org/altirra.html" rel="noopener">Altirra</a> &middot;
       <a id="emuDirect" href="emu/">open emulator directly</a> &middot;
+      <a href="?tv=1" id="tvLink">&#128250; TV mode</a> &middot;
       <a href="https://github.com/tsemachh/atari-arcade" rel="noopener">source on GitHub</a>
     </div>
 
@@ -447,6 +448,15 @@
                 });
                 if (g) location.href = launchUrl(g);
               });
+          }
+        } catch (e) { /* ignore */ }
+
+        // TV-mode footer link doubles as an exit when already active.
+        try {
+          if (new URLSearchParams(location.search).get("tv") === "1") {
+            var tl = document.getElementById("tvLink");
+            tl.textContent = "\uD83D\uDCFA TV mode: on (exit)";
+            tl.href = location.pathname;
           }
         } catch (e) { /* ignore */ }
 
