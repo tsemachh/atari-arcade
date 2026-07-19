@@ -361,7 +361,7 @@
           // Opening the picker with ?tv=1 (smart-TV browsers) propagates
           // TV-remote controls into every game launch.
           try {
-            if (new URLSearchParams(location.search).get("tv") === "1") url += "&tv=1";
+            if (new URLSearchParams(location.search).get("tv") === "1") url += "&tv=1&filter=point";
           } catch (e) { /* ignore */ }
           return url;
         }

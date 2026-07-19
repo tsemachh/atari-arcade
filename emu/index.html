@@ -7852,9 +7852,12 @@
       var on = !afBtn.classList.contains('on');
       afBtn.classList.toggle('on', on);
       if (afNative()) {
+        // Native auto-fire chops a HELD trigger into ~10 Hz pulses (the
+        // external trigger included), so hands-free fire = enable AF and
+        // hold the external trigger steady; the core does the pulsing.
         try { Module._ATWasmSetAutoFire(on ? 1 : 0); } catch (err) {}
         if (afTimer) { clearInterval(afTimer); afTimer = null; }
-        if (!on && ext.fire) { ext.fire = false; pushExt(); }
+        ext.fire = on; pushExt();
       } else if (on) {
         afTimer = setInterval(function () {
           ext.fire = !ext.fire; pushExt();

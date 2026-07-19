@@ -122,7 +122,7 @@
           if (g.joystick) url += "&joystick=" + encodeURIComponent(g.joystick);
           if (g.tilt) url += "&tilt=1";
           url += "&back_url=../3d/&back_label=" + encodeURIComponent("⬅ Games");
-          if (tvMode) url += "&tv=1";
+          if (tvMode) url += "&tv=1&filter=point";   // cheapest upscale for weak TV GPUs
           return url;
         }
 
