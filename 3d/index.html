@@ -91,7 +91,6 @@
     <div id="scanner"></div>
     <div id="tip"></div>
     <div class="ui bottom">
-      <a href="../">&larr; classic view</a>
       <span class="hint">drag / scroll &middot; tap a poster to play &middot; Enter plays the scanned card</span>
     </div>
     <div id="loading">Booting the arcade&hellip;</div>
@@ -265,6 +264,12 @@
           bar.appendChild(b);
         });
         qEl.addEventListener("input", function () { query = qEl.value; rebuild(); });
+        var back = document.createElement("a");
+        back.className = "chip";
+        back.href = "../" + (tvMode ? "?tv=1" : "");
+        back.style.textDecoration = "none";
+        back.textContent = "\u2190 classic view";
+        bar.appendChild(back);
 
         window.addEventListener("resize", function () { applySizes(); layout(); });
 
