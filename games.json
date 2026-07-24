@@ -61,12 +61,6 @@
       "category": "maze"
     },
     {
-      "name": "Breakout",
-      "file": "Breakout.xex",
-      "joystick": "dpad4",
-      "category": "maze"
-    },
-    {
       "name": "Bristles",
       "file": "Bristles.xex",
       "joystick": "dpad4",
