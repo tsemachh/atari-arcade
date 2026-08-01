@@ -465,6 +465,42 @@
       }, true);
     })();
 
+    // ---- desktop keyboard fire: Z / X / Alt(Option) ---------------------
+    // The emulator's keyboard fire is Ctrl, but macOS grabs Ctrl+Arrow at
+    // the OS level (Mission Control / App Exposé) before the browser ever
+    // sees it — you can't hold fire while steering. Offer triggers no OS
+    // touches: Z, X, and Alt/Option (on Mac laptops the right Option sits
+    // directly beside the arrow cluster). Capture-phase + stop so SDL
+    // never types the letter into the Atari; skipped with a modifier held
+    // (Cmd+Z stays undo) and in TV mode (own handler above).
+    if (params.get('tv') !== '1') (function () {
+      var kbFire = false;
+      function isFireKey(e) {
+        return e.code === 'KeyZ' || e.code === 'KeyX' || e.key === 'Alt';
+      }
+      function setKbFire(down) {
+        if (kbFire === down) return;
+        kbFire = down;
+        // Auto-fire ON holds the external trigger steady — never release it
+        var afHold = afBtn && afBtn.classList.contains('on');
+        ext.fire = down || !!afHold;
+        pushExt();
+      }
+      document.addEventListener('keydown', function (e) {
+        if (e.metaKey || e.ctrlKey) return;
+        if (!isFireKey(e)) return;
+        e.preventDefault(); e.stopImmediatePropagation();
+        setKbFire(true);
+      }, true);
+      document.addEventListener('keyup', function (e) {
+        if (!isFireKey(e)) return;
+        e.preventDefault(); e.stopImmediatePropagation();
+        setKbFire(false);
+      }, true);
+      // Alt+Tab / app switch can eat the keyup — never leave fire stuck
+      window.addEventListener('blur', function () { setKbFire(false); });
+    })();
+
     // ---- ?fs=1 : tap enters fullscreen ---------------------------------
     // Android Chrome rejects fullscreen requests made from start-of-touch
     // events (pointerdown/touchstart) — only end-of-gesture events carry

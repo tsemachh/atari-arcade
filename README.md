@@ -41,8 +41,8 @@ commit, and the service worker cache is busted on every deploy.
 The emulator under `emu/` is **[AltirraSDL](https://github.com/ilmenit/AltirraSDL)**
 by Jakub Dębski, a portable fork of **[Altirra](https://www.virtualdub.org/altirra.html)**
 by Avery Lee, licensed **GPLv2** (see [`emu/LICENSE`](emu/LICENSE)). The
-vendored bundle is built from upstream commit
-[`27d37558`](https://github.com/ilmenit/AltirraSDL/commit/27d37558); its
+vendored bundle is the official upstream CI build of commit
+[`54633535`](https://github.com/ilmenit/AltirraSDL/commit/54633535); its
 corresponding source is the upstream repository at that commit. Our
 modifications to the emulator's host page (the ARCADE-PATCH block injected
 into `emu/index.html`, source in
@@ -68,8 +68,12 @@ launches:
 - **TILT toggle + `?tilt=1`** — device-orientation steering (extra
   sensitivity on forward/back so the screen stays visible while
   accelerating).
-- **AUTO FIRE slide switch** — pulses the trigger at ~11 Hz via
-  `ATWasmSetJoystick`.
+- **AUTO FIRE slide switch** — native in-core auto-fire
+  (`ATWasmSetAutoFire`) with an ~11 Hz `ATWasmSetJoystick` fallback on
+  older bundles.
+- **Keyboard fire: Z / X / Alt(Option)** — macOS grabs Ctrl+Arrow
+  (Mission Control), so the emulator's Ctrl fire key can't be held
+  while steering; these alternates work on every desktop OS.
 - **`?tv=1`** — smart-TV remote controls (CE-HTML/HbbTV key codes):
   D-pad → joystick, OK → fire, Red/Green/Yellow → START/SELECT/OPTION,
   Blue → auto-fire, Play/Pause → pause, Back → picker. Open the picker
