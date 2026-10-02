@@ -133,6 +133,7 @@
         margin: 0 auto;
       }
       .card {
+        position: relative;
         display: flex;
         flex-direction: column;
         border-radius: 12px;
@@ -143,6 +144,38 @@
         transition: border-color 0.12s;
         overflow: hidden;
       }
+      .card .copy {
+        position: absolute;
+        top: 6px; right: 6px;
+        width: 30px; height: 30px;
+        border-radius: 8px;
+        border: 1px solid rgba(255,255,255,.28);
+        background: rgba(13,17,23,.7);
+        color: #e6eefc;
+        font-size: 14px; line-height: 1;
+        cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        opacity: 0; transition: opacity .12s;
+      }
+      .card:hover .copy, .card:focus-within .copy { opacity: 1; }
+      @media (hover: none) { .card .copy { opacity: 1; } }
+      .card .copy:hover { border-color: var(--accent); color: var(--accent); }
+      .card .copy.copied { color: #4ade80; border-color: #4ade80; }
+      #copyToast {
+        position: fixed;
+        left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 24px);
+        transform: translateX(-50%);
+        background: rgba(13,17,23,.95);
+        border: 1px solid var(--accent);
+        color: #e6eefc;
+        padding: 10px 18px;
+        border-radius: 10px;
+        font-size: 14px;
+        z-index: 1000;
+        opacity: 0; pointer-events: none;
+        transition: opacity .15s;
+      }
+      #copyToast.show { opacity: 1; }
       .card .shot {
         width: 100%;
         aspect-ratio: 336 / 240;
@@ -204,6 +237,7 @@
     <div id="chips" class="chips"></div>
     <div id="grid" class="grid"></div>
     <div id="status" class="status">Loading game list…</div>
+    <div id="copyToast" role="status" aria-live="polite"></div>
     <div class="footer">
       <span id="buildLine">&nbsp;</span><br />
       Emulation by <a href="https://github.com/ilmenit/AltirraSDL" rel="noopener">AltirraSDL</a>
@@ -254,6 +288,45 @@
           } catch (e) { /* ignore */ }
           renderRecent();
         }
+        // Short per-game slug (e.g. "Boulder Dash" -> "boulderdash") for
+        // copy-paste deep links: <origin><path>?g=<slug>. Derived, so it
+        // stays in sync between the copy button and the ?g= resolver.
+        function slugify(name) {
+          return String(name).toLowerCase().replace(/[^a-z0-9]+/g, "");
+        }
+        function shareUrl(g) {
+          return location.origin + location.pathname + "?g=" + slugify(g.name);
+        }
+        var copyToast = document.getElementById("copyToast");
+        var copyToastTimer = null;
+        function showToast(msg) {
+          if (!copyToast) return;
+          copyToast.textContent = msg;
+          copyToast.classList.add("show");
+          if (copyToastTimer) clearTimeout(copyToastTimer);
+          copyToastTimer = setTimeout(function () {
+            copyToast.classList.remove("show");
+          }, 1800);
+        }
+        function copyText(text) {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            return navigator.clipboard.writeText(text);
+          }
+          // Fallback for non-secure contexts / old browsers.
+          return new Promise(function (resolve, reject) {
+            try {
+              var ta = document.createElement("textarea");
+              ta.value = text;
+              ta.style.position = "fixed";
+              ta.style.opacity = "0";
+              document.body.appendChild(ta);
+              ta.select();
+              document.execCommand("copy");
+              ta.remove();
+              resolve();
+            } catch (e) { reject(e); }
+          });
+        }
         function makeCard(g, mini) {
           var a = document.createElement("a");
           a.className = "card";
@@ -279,6 +352,30 @@
             meta.appendChild(d);
           }
           a.appendChild(meta);
+          if (!mini) {
+            var copy = document.createElement("button");
+            copy.type = "button";
+            copy.className = "copy";
+            copy.title = "Copy link to this game";
+            copy.setAttribute("aria-label", "Copy link to " + g.name);
+            copy.textContent = "🔗"; // link emoji
+            copy.addEventListener("click", function (e) {
+              e.preventDefault();
+              e.stopPropagation();
+              copyText(shareUrl(g)).then(function () {
+                copy.classList.add("copied");
+                copy.textContent = "✓";
+                showToast("Link copied — " + g.name);
+                setTimeout(function () {
+                  copy.classList.remove("copied");
+                  copy.textContent = "🔗";
+                }, 1500);
+              }).catch(function () {
+                showToast("Couldn't copy — " + shareUrl(g));
+              });
+            });
+            a.appendChild(copy);
+          }
           return a;
         }
         function renderRecent() {
@@ -435,17 +532,28 @@
           go();
         });
 
-        // Deep link: ?rom=<name> jumps straight into the emulator.
+        // Deep link: ?g=<slug> (short, shareable) or ?rom=<name|file>
+        // jumps straight into the emulator.
         try {
-          var wanted = new URLSearchParams(location.search).get("rom");
-          if (wanted) {
+          var params = new URLSearchParams(location.search);
+          var gslug = params.get("g");
+          var wanted = params.get("rom");
+          if (gslug || wanted) {
             fetch("games.json", { cache: "no-cache" })
               .then(function (r) { return r.json(); })
               .then(function (data) {
-                var g = (data.games || []).find(function (e) {
-                  return e.name.toLowerCase() === wanted.toLowerCase() ||
-                         e.file.toLowerCase() === wanted.toLowerCase();
-                });
+                var list = data.games || [];
+                var g = null;
+                if (gslug) {
+                  var want = slugify(gslug);
+                  g = list.find(function (e) { return slugify(e.name) === want; });
+                }
+                if (!g && wanted) {
+                  g = list.find(function (e) {
+                    return e.name.toLowerCase() === wanted.toLowerCase() ||
+                           e.file.toLowerCase() === wanted.toLowerCase();
+                  });
+                }
                 if (g) location.href = launchUrl(g);
               });
           }

@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="firmware">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/firmware.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/tsemachhadad/.claude/**)",
+      "Bash(bash ~/.claude/statusline-command.sh)",
+      "Bash(echo \"---exit code: $?\")",
+      "Bash(python3 -c 'import json; json.load\\(open\\('\\\\''/Users/tsemachhadad/.claude/settings.json'\\\\''\\)\\); print\\('\\\\''settings.json: valid JSON'\\\\''\\)')",
+      "Read(//Users/tsemachhadad/games/atari-arcade/**)",
+      "Bash(gh issue *)"
+    ]
+  }
+}

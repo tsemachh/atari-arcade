@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls /private/tmp/claude-505/-Users-tsemachhadad-games-atari-arcade-upstream-pr/c967da09-9bca-4f7e-9fb7-439e591d5cbf/scratchpad)",
+      "Bash(echo ---)",
+      "Bash(ls /private/tmp/claude-505/-Users-tsemachhadad-games-atari-arcade-upstream-pr/c967da09-9bca-4f7e-9fb7-439e591d5cbf/scratchpad/AltirraSDL)"
+    ]
+  }
+}
