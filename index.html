@@ -248,6 +248,16 @@
     </div>
 
     <script>
+      // Installed app (manifest display: fullscreen): decided once at load, before any
+      // Fullscreen API call could change display-mode. In app mode nothing requests
+      // fullscreen - each request only adds Chrome's "swipe to exit" banner.
+      var launchedAsApp = false;
+      try {
+        launchedAsApp =
+          (window.matchMedia("(display-mode: fullscreen)").matches && !document.fullscreenElement) ||
+          window.matchMedia("(display-mode: standalone)").matches ||
+          window.navigator.standalone === true;
+      } catch (err) { /* keep false */ }
       (function () {
         "use strict";
         var grid = document.getElementById("grid");
@@ -444,7 +454,10 @@
         function launchUrl(game) {
           var url =
             "emu/?lib=" + encodeURIComponent(game.file) +
-            "&fs=1&pal=1&crt=0&experience=convenient&addons=off";
+            // fs=1 makes the emulator request fullscreen on the first touch (e.g. FIRE);
+            // the installed app is already fullscreen, so leave it out there
+            (launchedAsApp ? "" : "&fs=1") +
+            "&pal=1&crt=0&experience=convenient&addons=off";
           // Per-game touch-joystick style (analog / dpad8 / dpad4). Omitted
           // games fall back to the emulator default (analog).
           if (game.joystick) {
@@ -513,13 +526,6 @@
           if (a && a.dataset.file) recordPlay(a.dataset.file);
         }, true);
 
-        var launchedAsApp = false;
-        try {
-          launchedAsApp =
-            (window.matchMedia("(display-mode: fullscreen)").matches && !document.fullscreenElement) ||
-            window.matchMedia("(display-mode: standalone)").matches ||
-            window.navigator.standalone === true;
-        } catch (err) { /* keep false */ }
         grid.addEventListener("click", function (e) {
           if ((navigator.maxTouchPoints || 0) === 0) return; // desktop: normal
           // installed app: already fullscreen from the manifest - skip the Fullscreen API
