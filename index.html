@@ -513,8 +513,18 @@
           if (a && a.dataset.file) recordPlay(a.dataset.file);
         }, true);
 
+        var launchedAsApp = false;
+        try {
+          launchedAsApp =
+            (window.matchMedia("(display-mode: fullscreen)").matches && !document.fullscreenElement) ||
+            window.matchMedia("(display-mode: standalone)").matches ||
+            window.navigator.standalone === true;
+        } catch (err) { /* keep false */ }
         grid.addEventListener("click", function (e) {
           if ((navigator.maxTouchPoints || 0) === 0) return; // desktop: normal
+          // installed app: already fullscreen from the manifest - skip the Fullscreen API
+          // (it would only add Chrome's "swipe to exit" banner)
+          if (launchedAsApp) return;
           var a = e.target && e.target.closest && e.target.closest("a.card");
           if (!a) return;
           var root = document.documentElement;

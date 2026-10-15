@@ -508,7 +508,9 @@
     // keep retrying on every tap until fullscreen actually takes; the
     // listeners are removed only on success.
     try {
-      if (params.get('fs') === '1' && document.documentElement.requestFullscreen) {
+      // installed app (manifest display: fullscreen) is already immersive - requesting the
+      // Fullscreen API on top would only add Chrome's "swipe to exit" banner
+      if (params.get('fs') === '1' && !isAppMode() && document.documentElement.requestFullscreen) {
         var fsEvents = ['pointerup', 'touchend', 'click'];
         var fsDisarm = function () {
           fsEvents.forEach(function (n) { document.removeEventListener(n, fsArm, true); });
