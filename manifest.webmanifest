@@ -5,7 +5,7 @@
   "description": "Atari 800 XL game library running on the AltirraSDL emulator",
   "start_url": "index.html",
   "scope": "./",
-  "display": "standalone",
+  "display": "fullscreen",
   "display_override": ["fullscreen", "standalone"],
   "orientation": "landscape",
   "background_color": "#0d1117",
